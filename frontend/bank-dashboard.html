@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Banque - AgroSmart</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/frontend/i18n.js"></script>
+    <script src="/frontend/language-selector.js"></script>
+    <script src="/frontend/push-notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof languageSelector !== 'undefined') {
+                languageSelector.init();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div>
+                <h1>🏦 Tableau de bord banque</h1>
+                <p>Pilotez les décisions de crédit avec une vue claire des risques, de la trésorerie et des performances en temps réel.</p>
+            </div>
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <button id="logout-btn" class="btn-secondary">Déconnexion</button>
+            </div>
+        </header>
+
+        <div class="offline-sync-section">
+            <h3>📱 Synchronisation Hors-ligne</h3>
+            <p>Recevez un résumé de vos activités par SMS (zones hors-ligne)</p>
+            <button class="btn-secondary" onclick="syncOfflineData()">
+                📩 Envoyer résumé par SMS
+            </button>
+        </div>
+
+        <nav class="dashboard-nav">
+            <a href="#overview" class="nav-link active">Aperçu</a>
+            <a href="#loan-requests" class="nav-link">Demandes de Prêt</a>
+            <a href="#approved-loans" class="nav-link">Prêts Approuvés</a>
+            <a href="#analytics" class="nav-link">Analyses</a>
+        </nav>
+
+        <main class="dashboard-content">
+            <section id="overview" class="dashboard-section active">
+                <h2>📊 Aperçu des Activités Bancaires</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Demandes en Attente</h3>
+                        <div class="stat-value" id="pending-requests">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Prêts Approuvés</h3>
+                        <div class="stat-value" id="approved-loans-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Montant Total Prêté</h3>
+                        <div class="stat-value" id="total-loaned">0 XOF</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Taux d'Approbation</h3>
+                        <div class="stat-value" id="approval-rate">0%</div>
+                    </div>
+                </div>
+                <div class="dashboard-banner">
+                    <div class="banner-copy">
+                        <span class="badge">Vue Générale</span>
+                        <h3>Optimisez votre cycle de prêt grâce à une vision instantanée des tendances et des risques.</h3>
+                        <p>Le tableau de bord banque propose des analyses claires pour accélérer l’approbation, réduire les délais et suivre vos performances.</p>
+                    </div>
+                    <button id="insights-btn" class="btn-primary">Découvrir les insights</button>
+                </div>
+                <div class="insight-grid" id="insights-section">
+                    <div class="insight-card">
+                        <h4>Performance rapide</h4>
+                        <p>Les marges de prêt et flux de trésorerie sont visualisés pour des décisions plus rapides et plus sûres.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h4>Priorités de financement</h4>
+                        <p>Repérez les demandes à plus fort potentiel et réduisez le temps de mise en place des crédits.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="loan-requests" class="dashboard-section">
+                <h2>📋 Demandes de Prêt en Attente</h2>
+                <div id="pending-loans-list" class="items-grid">
+                    <!-- Les demandes seront chargées dynamiquement -->
+                </div>
+            </section>
+
+            <section id="approved-loans" class="dashboard-section">
+                <h2>✅ Prêts Approuvés</h2>
+                <div id="approved-loans-list" class="items-grid">
+                    <!-- Les prêts approuvés seront chargés dynamiquement -->
+                </div>
+            </section>
+
+            <section id="analytics" class="dashboard-section">
+                <h2>📈 Analyses et Statistiques</h2>
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Évolution des Prêts</h3>
+                        <canvas id="loans-chart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Répartition par Région</h3>
+                        <canvas id="regions-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="loan-modal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close">&times;</span>
+            <div id="loan-details">
+                <!-- Les détails seront chargés dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/frontend/sw.js')
+                .then(registration => console.log('Service Worker enregistré:', registration.scope))
+                .catch(error => console.error('Service Worker échec:', error));
+        }
+        
+        function scrollToInsights() {
+            const insightGrid = document.querySelector('.insight-grid');
+            if (insightGrid) {
+                insightGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    </script>
+    <script src="app.js"></script>
+    <script src="bank-dashboard.js"></script>
+</body>
+</html>

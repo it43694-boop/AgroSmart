@@ -1,0 +1,4 @@
+# ML optionnel — installer apres requirements.txt
+# Sur Python 3.13, utiliser des wheels precompiles (>= 1.6.1)
+-r requirements.txt
+scikit-learn>=1.6.1,<1.8

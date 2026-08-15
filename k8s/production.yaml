@@ -1,0 +1,194 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agro-smart
+---
+# ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agro-api-config
+  namespace: agro-smart
+data:
+  ENVIRONMENT: production
+  LOG_LEVEL: warning
+  REDIS_URL: redis://redis-service:6379
+  DATABASE_URL: postgresql://agro_user:password@postgres-service:5432/agro_db_prod
+---
+# Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: agro-api-secrets
+  namespace: agro-smart
+type: Opaque
+stringData:
+  DATABASE_URL: postgresql://agro_user:${DB_PASSWORD}@postgres-service:5432/agro_db_prod
+  REDIS_URL: redis://redis-service:6379
+  SECRET_KEY: ${SECRET_KEY}
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+---
+# Main Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agro-api
+  namespace: agro-smart
+  labels:
+    app: agro-api
+    version: stable
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: agro-api
+      version: stable
+  template:
+    metadata:
+      labels:
+        app: agro-api
+        version: stable
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - agro-api
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: app
+        image: ${DOCKER_REGISTRY}/agro-smart:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+        - name: metrics
+          containerPort: 8001
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: agro-api-config
+        - secretRef:
+            name: agro-api-secrets
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 15"]
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: agro-api-service
+  namespace: agro-smart
+  labels:
+    app: agro-api
+spec:
+  type: ClusterIP
+  selector:
+    app: agro-api
+    version: stable
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: metrics
+    port: 8001
+    targetPort: metrics
+    protocol: TCP
+---
+# HorizontalPodAutoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: agro-api-hpa
+  namespace: agro-smart
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: agro-api
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+---
+# NetworkPolicy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agro-api-network-policy
+  namespace: agro-smart
+spec:
+  podSelector:
+    matchLabels:
+      app: agro-api
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8000
+  egress:
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 5432
+    - protocol: TCP
+      port: 6379

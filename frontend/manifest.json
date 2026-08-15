@@ -1,0 +1,105 @@
+{
+  "name": "AgroSmart - Agriculture Intelligente",
+  "short_name": "AgroSmart",
+  "description": "Plateforme agricole intelligente avec IA, blockchain, IoT et finance pour l'Afrique",
+  "start_url": "/frontend/index.html",
+  "scope": "/frontend/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#2b6cb0",
+  "display_override": ["standalone", "fullscreen"],
+  "prefer_related_applications": false,
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/frontend/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/frontend/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/frontend/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/frontend/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/frontend/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/frontend/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/frontend/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/frontend/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["agriculture", "business", "finance", "productivity"],
+  "screenshots": [
+    {
+      "src": "/frontend/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/frontend/screenshots/mobile-1.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Marketplace",
+      "short_name": "Marketplace",
+      "description": "Accéder directement à la marketplace",
+      "url": "/frontend/index.html#marketplace",
+      "icons": [{ "src": "/frontend/icons/marketplace.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Météo",
+      "short_name": "Météo",
+      "description": "Voir les prévisions météo",
+      "url": "/frontend/index.html#weather",
+      "icons": [{ "src": "/frontend/icons/weather.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Finance",
+      "short_name": "Finance",
+      "description": "Gérer vos finances",
+      "url": "/frontend/index.html#finance",
+      "icons": [{ "src": "/frontend/icons/finance.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}

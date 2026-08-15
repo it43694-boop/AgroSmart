@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSmart - Créer un compte</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#07111f">
+    <style>
+        :root {
+            --bg: #07111f;
+            --surface: rgba(10, 20, 36, 0.82);
+            --surface-soft: rgba(255, 255, 255, 0.07);
+            --accent: #34d399;
+            --accent-strong: #10b981;
+            --text: #f8fafc;
+            --muted: #cbd5e1;
+            --border: rgba(255, 255, 255, 0.14);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            margin: 0;
+            padding: 24px;
+            min-height: 100vh;
+            font-family: Inter, "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(52, 211, 153, 0.25), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.2), transparent 26%),
+                var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            width: min(1040px, 100%);
+            display: grid;
+            grid-template-columns: 0.95fr 1.05fr;
+            border-radius: 32px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            box-shadow: 0 24px 80px rgba(2, 8, 23, 0.38);
+            overflow: hidden;
+            backdrop-filter: blur(24px);
+        }
+        .hero {
+            padding: 42px 36px;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.28), rgba(15, 23, 42, 0.95));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 16px;
+        }
+        .hero h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.15; }
+        .hero p { color: var(--muted); line-height: 1.7; }
+        .hero .points { display: grid; gap: 10px; margin-top: 8px; }
+        .hero .points div { padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.07); }
+        .form-panel { padding: 36px; background: rgba(255,255,255,0.03); }
+        .form-header { margin-bottom: 20px; }
+        .form-header h2 { font-size: 1.3rem; margin-bottom: 8px; }
+        .form-header p { color: var(--muted); font-size: 0.95rem; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.92rem; color: #e2e8f0; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 13px 15px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.06);
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+        }
+        .form-group input::placeholder, .form-group select::placeholder { color: rgba(255,255,255,0.45); }
+        .form-group input:focus, .form-group select:focus {
+            border-color: rgba(52, 211, 153, 0.55);
+            box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.16);
+            background: rgba(255,255,255,0.09);
+        }
+        .form-group select option { background: #07111f; color: var(--text); }
+        .error-message {
+            color: #fecaca;
+            font-size: 0.92rem;
+            margin-bottom: 16px;
+            display: none;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(248, 113, 113, 0.14);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+        .error-message.visible { display: block; }
+        .signup-button {
+            width: 100%;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            border: none;
+            border-radius: 14px;
+            color: #042f2e;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(52, 211, 153, 0.22);
+            margin-top: 6px;
+        }
+        .signup-button:hover { transform: translateY(-1px); }
+        .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+        .login-link a { color: #bbf7d0; text-decoration: none; font-weight: 600; }
+        .login-link a:hover { text-decoration: underline; }
+        @media (max-width: 860px) {
+            .card { grid-template-columns: 1fr; }
+            .form-panel { padding-top: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <section class="hero">
+            <h1>Rejoignez AgroSmart</h1>
+            <p>Créez votre compte pour profiter d’un environnement agricole connecté, clair et performant.</p>
+            <div class="points">
+                <div>🌱 Outils de suivi et d’analyse</div>
+                <div>📊 Tableau de bord moderne</div>
+                <div>⚡ Accès rapide selon votre profil</div>
+            </div>
+        </section>
+        <section class="form-panel">
+            <div class="form-header">
+                <h2>Créer votre compte</h2>
+                <p>Remplissez les informations ci-dessous pour commencer.</p>
+            </div>
+            <div class="error-message" id="signup-error"></div>
+            <form id="signup-form" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="first-name">Prénom</label>
+                    <input type="text" id="first-name" placeholder="Votre prénom" required>
+                </div>
+                <div class="form-group">
+                    <label for="last-name">Nom</label>
+                    <input type="text" id="last-name" placeholder="Votre nom" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Téléphone</label>
+                    <input type="tel" id="phone" placeholder="+223 XX XX XX XX" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Adresse email</label>
+                    <input type="email" id="email" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" placeholder="Minimum 8 caractères" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirmer le mot de passe</label>
+                    <input type="password" id="confirm-password" placeholder="Confirmer votre mot de passe" required>
+                </div>
+                <div class="form-group">
+                    <label for="region">Région</label>
+                    <input type="text" id="region" placeholder="Votre région" required>
+                </div>
+                <div class="form-group">
+                    <label for="surface">Surface agricole (hectares)</label>
+                    <input type="number" id="surface" placeholder="Nombre d'hectares" step="0.1" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="account-type">Type de compte</label>
+                    <select id="account-type" required>
+                        <option value="farmer">Agriculteur</option>
+                        <option value="client">Client</option>
+                        <option value="bank">Banque</option>
+                        <option value="insurance">Assurance</option>
+                    </select>
+                </div>
+                <button type="submit" class="signup-button">Créer mon compte</button>
+            </form>
+            <div class="login-link">
+                Vous avez déjà un compte ? <a href="/login">Se connecter</a>
+            </div>
+        </section>
+    </div>
+    <script src="signup.js"></script>
+</body>
+</html>

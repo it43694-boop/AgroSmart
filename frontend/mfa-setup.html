@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSmart - Configuration MFA</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#0f172a">
+    <style>
+        :root {
+            --bg: #07111f;
+            --surface: rgba(10, 20, 36, 0.82);
+            --surface-soft: rgba(255, 255, 255, 0.07);
+            --accent: #34d399;
+            --accent-strong: #10b981;
+            --text: #f8fafc;
+            --muted: #cbd5e1;
+            --border: rgba(255, 255, 255, 0.14);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(52, 211, 153, 0.25), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.2), transparent 26%),
+                var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+        .page {
+            width: min(1040px, 100%);
+            display: grid;
+            grid-template-columns: 1fr 0.9fr;
+            gap: 0;
+            border-radius: 32px;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: 0 24px 80px rgba(2, 8, 23, 0.38);
+            backdrop-filter: blur(24px);
+        }
+        .hero {
+            padding: 42px 36px;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.28), rgba(15, 23, 42, 0.95));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+        .hero h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.15; }
+        .hero p { color: var(--muted); line-height: 1.7; }
+        .hero .note { padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,0.08); color: #d1fae5; }
+        .content { padding: 42px 36px; }
+        .content h2 { font-size: 1.4rem; margin-bottom: 8px; }
+        .content p { color: var(--muted); margin-bottom: 24px; }
+        .field { margin-bottom: 18px; }
+        .field label { display: block; margin-bottom: 8px; color: #e2e8f0; font-size: 0.92rem; }
+        .field input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 180ms ease, box-shadow 180ms ease; }
+        .field input::placeholder { color: rgba(255,255,255,0.45); }
+        .field input:focus { border-color: rgba(52, 211, 153, 0.55); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.16); background: rgba(255,255,255,0.09); }
+        .button { width: 100%; padding: 14px 16px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #042f2e; font-weight: 700; font-size: 0.98rem; cursor: pointer; box-shadow: 0 12px 25px rgba(52, 211, 153, 0.22); }
+        .button:not(:disabled):hover { transform: translateY(-1px); }
+        .message { margin-bottom: 20px; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); }
+        .error { border-color: rgba(248, 113, 113, 0.2); background: rgba(248, 113, 113, 0.12); color: #fecaca; }
+        .success { border-color: rgba(52, 211, 153, 0.2); background: rgba(52, 211, 153, 0.12); color: #bbf7d0; }
+        .qr-container { display: grid; gap: 12px; margin-top: 16px; }
+        .qr-container img { max-width: 100%; border-radius: 18px; background: #fff; padding: 16px; }
+        .backup-codes { display: grid; gap: 8px; margin-top: 12px; padding: 16px; border-radius: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); }
+        .backup-codes li { list-style: none; font-family: monospace; }
+        .small-link { display: inline-block; margin-top: 12px; color: #bbf7d0; text-decoration: none; font-weight: 600; }
+        .small-link:hover { text-decoration: underline; }
+        @media (max-width: 860px) { .page { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <section class="hero">
+            <div>
+                <div class="note">Sécurisez votre compte avec une authentification à deux facteurs. Utilisez Google Authenticator ou toute app compatible TOTP.</div>
+                <h1>Configuration MFA</h1>
+                <p>Activez la MFA pour vos rôles Admin, Banque, Assurance ou Client. Le QR code et les codes de secours sont générés ici.</p>
+            </div>
+            <div class="note">Si vous avez déjà activé MFA, connectez-vous et utilisez le champ Code MFA sur la page de connexion.</div>
+        </section>
+        <section class="content">
+            <div class="message" id="setup-message" style="display:none"></div>
+            <form id="mfa-setup-form">
+                <div class="field">
+                    <label for="username">Email ou identifiant</label>
+                    <input type="text" id="username" placeholder="Votre email ou nom d'utilisateur" required>
+                </div>
+                <div class="field">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" placeholder="Votre mot de passe" required>
+                </div>
+                <button type="submit" class="button">Démarrer la configuration MFA</button>
+            </form>
+            <div id="qr-section" style="display:none">
+                <div class="message success" id="qr-notice">Scannez ce QR dans votre application d'authentification.</div>
+                <div class="qr-container">
+                    <img id="qr-image" src="" alt="QR code MFA">
+                </div>
+                <div class="backup-codes" id="backup-codes" style="display:none">
+                    <strong>Codes de secours (conservez-les précieusement)</strong>
+                    <ul id="backup-code-list"></ul>
+                </div>
+                <div class="field">
+                    <label for="totp-code">Code TOTP</label>
+                    <input type="text" id="totp-code" placeholder="Entrez le code affiché par l'app" required>
+                </div>
+                <button id="verify-button" class="button">Valider le code MFA</button>
+                <div style="margin-top:16px;">
+                    <a class="small-link" href="/login">Retour à la connexion</a>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="/frontend/mfa-setup.js" defer></script>
+</body>
+</html>

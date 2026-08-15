@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Authentification - AgroSmart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 { color: #333; }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ddd;
+        }
+        .test-section.pass {
+            border-left-color: #4caf50;
+            background-color: #f1f8f6;
+        }
+        .test-section.fail {
+            border-left-color: #f44336;
+            background-color: #fef1f0;
+        }
+        .test-section.warn {
+            border-left-color: #ff9800;
+            background-color: #fff3f0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .status-badge.pass { background: #4caf50; color: white; }
+        .status-badge.fail { background: #f44336; color: white; }
+        .status-badge.warn { background: #ff9800; color: white; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px 5px 5px 0;
+        }
+        button:hover { background: #1976D2; }
+        .debug-log {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th { background: #f5f5f5; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Diagnostic Authentification - AgroSmart</h1>
+
+    <div class="test-section">
+        <h2>Commandes rapides</h2>
+        <button onclick="runAllTests()">Tester tout</button>
+        <button onclick="clearAllTests()">Réinitialiser</button>
+        <button onclick="clearLocalStorage()">Effacer localStorage</button>
+        <button onclick="testLogin()">Tester login</button>
+    </div>
+
+    <div id="test-results"></div>
+
+    <script>
+        const apiBase = (window.location.origin || '') + '/api';
+        const resultsDiv = document.getElementById('test-results');
+
+        function addResult(title, status, message, details = '') {
+            const section = document.createElement('div');
+            section.className = `test-section ${status}`;
+
+            const badge = document.createElement('span');
+            badge.className = `status-badge ${status}`;
+            badge.textContent = status.toUpperCase();
+
+            const content = `
+                <h3>${badge.outerHTML} ${title}</h3>
+                <p>${message}</p>
+                ${details ? `<details><summary>Details</summary><pre>${details}</pre></details>` : ''}
+            `;
+
+            section.innerHTML = content;
+            resultsDiv.appendChild(section);
+        }
+
+        function clearAllTests() {
+            resultsDiv.innerHTML = '';
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            addResult('localStorage', 'pass', 'Donnees effacees. Vous devez vous reconnecter.');
+        }
+
+        async function testLocalStorage() {
+            try {
+                const token = localStorage.getItem('accessToken');
+                if (!token) {
+                    addResult('1. localStorage - accessToken', 'fail',
+                        'Aucun token trouve dans localStorage. Vous devez vous connecter d\'abord.');
+                    return false;
+                }
+
+                const tokenPreview = token.substring(0, 30) + '...';
+                addResult('1. localStorage - accessToken', 'pass',
+                    `Token trouve: ${tokenPreview}`,
+                    `Longueur: ${token.length} caracteres\nPremiers caracteres: ${token.substring(0, 50)}`);
+                return true;
+            } catch (e) {
+                addResult('1. localStorage', 'fail',
+                    'Erreur acces localStorage: ' + e.message);
+                return false;
+            }
+        }
+
+        async function testMeEndpoint() {
+            try {
+                const token = localStorage.getItem('accessToken');
+                if (!token) {
+                    addResult('2. GET /me endpoint', 'fail',
+                        'Pas de token. Connectez-vous d\'abord.');
+                    return false;
+                }
+
+                const response = await fetch(`${apiBase}/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.status === 200) {
+                    const details = `
+Email: ${data.email}
+Nom: ${data.full_name}
+Role: ${data.role}
+Type: ${data.account_type}
+ID: ${data.id}
+Admin: ${data.is_admin}`;
+                    addResult('2. GET /me endpoint', 'pass',
+                        'Connexion reussie!', details);
+                    return true;
+                } else {
+                    addResult('2. GET /me endpoint', 'fail',
+                        `Erreur ${response.status}: ${data.detail || 'Erreur inconnue'}`,
+                        JSON.stringify(data, null, 2));
+                    return false;
+                }
+            } catch (e) {
+                addResult('2. GET /me endpoint', 'fail',
+                    'Erreur reseau: ' + e.message);
+                return false;
+            }
+        }
+
+        async function testFarmerDashboard() {
+            try {
+                const token = localStorage.getItem('accessToken');
+                if (!token) {
+                    addResult('3. GET /farmer-dashboard', 'fail',
+                        'Pas de token');
+                    return false;
+                }
+
+                const response = await fetch(`${apiBase}/farmer-dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    redirect: 'manual'
+                });
+
+                if (response.status === 307) {
+                    const location = response.headers.get('location');
+                    addResult('3. GET /farmer-dashboard', 'pass',
+                        `Redirection vers: ${location}`);
+                    return true;
+                } else if (response.status === 200) {
+                    addResult('3. GET /farmer-dashboard', 'pass',
+                        'Acces direct reussi');
+                    return true;
+                } else {
+                    addResult('3. GET /farmer-dashboard', 'fail',
+                        `Status ${response.status}`);
+                    return false;
+                }
+            } catch (e) {
+                addResult('3. GET /farmer-dashboard', 'fail',
+                    'Erreur: ' + e.message);
+                return false;
+            }
+        }
+
+        async function testFarmerDashboardHtml() {
+            try {
+                const token = localStorage.getItem('accessToken');
+                if (!token) {
+                    addResult('4. GET /frontend/farmer-dashboard.html', 'fail',
+                        'Pas de token');
+                    return false;
+                }
+
+                const response = await fetch(`${apiBase}/frontend/farmer-dashboard.html`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 200) {
+                    const html = await response.text();
+                    const hasJs = html.includes('farmer-dashboard.js');
+                    addResult('4. GET /frontend/farmer-dashboard.html', 'pass',
+                        `Fichier charge (${html.length} bytes)${hasJs ? ', farmer-dashboard.js inclus' : ''}`);
+                    return true;
+                } else {
+                    addResult('4. GET /frontend/farmer-dashboard.html', 'fail',
+                        `Status ${response.status}`);
+                    return false;
+                }
+            } catch (e) {
+                addResult('4. GET /frontend/farmer-dashboard.html', 'fail',
+                    'Erreur: ' + e.message);
+                return false;
+            }
+        }
+
+        async function testLogin() {
+            try {
+                clearAllTests();
+                addResult('Test Login', 'warn', 'Test en cours...');
+
+                const response = await fetch(`${apiBase}/token`, {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        'username': 'farmer@test.com',
+                        'password': 'Farmer123!'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.status === 200) {
+                    localStorage.setItem('accessToken', data.access_token);
+                    localStorage.setItem('refreshToken', data.refresh_token);
+                    addResult('Login', 'pass',
+                        'Connexion reussie! Token sauvegarde dans localStorage.',
+                        `Token: ${data.access_token.substring(0, 50)}...`);
+                    return true;
+                } else {
+                    addResult('Login', 'fail',
+                        `Erreur: ${data.detail || 'Erreur inconnue'}`);
+                    return false;
+                }
+            } catch (e) {
+                addResult('Login', 'fail', 'Erreur: ' + e.message);
+                return false;
+            }
+        }
+
+        async function runAllTests() {
+            clearAllTests();
+            const hasToken = await testLocalStorage();
+            if (hasToken) {
+                await testMeEndpoint();
+                await testFarmerDashboard();
+                await testFarmerDashboardHtml();
+            }
+        }
+
+        // Auto-run on page load
+        window.addEventListener('load', () => {
+            addResult('Diagnostic', 'warn',
+                'Bienvenue! Cette page aide a diagnostiquer les problemes d\'authentification. Cliquez sur "Tester tout" pour commencer.');
+        });
+    </script>
+</body>
+</html>

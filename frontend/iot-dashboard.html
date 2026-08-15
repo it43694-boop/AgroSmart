@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSmart - Dashboard IoT</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="/frontend/chart.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="/frontend/i18n.js"></script>
+    <script src="/frontend/language-selector.js"></script>
+    <script src="/frontend/push-notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof languageSelector !== 'undefined') {
+                languageSelector.init();
+            }
+        });
+    </script>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #020617;
+            --panel: rgba(7, 12, 29, 0.82);
+            --panel-strong: rgba(8, 16, 35, 0.95);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --line: rgba(255, 255, 255, 0.12);
+            --accent: #7c3aed;
+            --accent-2: #22d3ee;
+            --accent-3: #34d399;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(124, 58, 237, 0.28), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.22), transparent 24%),
+                linear-gradient(135deg, #020617 0%, #07111f 48%, #0f172a 100%);
+        }
+
+        .iot-dashboard {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 28px 20px 40px;
+        }
+
+        .iot-hero {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 24px;
+            margin-bottom: 22px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.24), rgba(34, 211, 238, 0.12));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+            backdrop-filter: blur(20px);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #d9faff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            margin-bottom: 10px;
+        }
+
+        .iot-header h1 {
+            margin: 0 0 8px;
+            font-size: clamp(1.7rem, 2.4vw, 2.4rem);
+            color: white;
+        }
+
+        .iot-header p {
+            margin: 0;
+            color: var(--muted);
+            max-width: 760px;
+            line-height: 1.65;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .iot-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .iot-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 22px;
+            padding: 20px;
+            min-height: 170px;
+            box-shadow: 0 16px 42px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(16px);
+        }
+
+        .iot-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.28), rgba(34, 211, 238, 0.12));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .card-icon {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            margin-bottom: 12px;
+            color: #d9faff;
+        }
+
+        .iot-card h2 {
+            margin: 0 0 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .iot-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .iot-alert {
+            margin-bottom: 20px;
+            padding: 18px 20px;
+            border-radius: 18px;
+            color: white;
+            background: linear-gradient(135deg, rgba(251, 113, 133, 0.95), rgba(249, 115, 22, 0.92));
+            box-shadow: 0 16px 40px rgba(251, 113, 133, 0.24);
+        }
+
+        .iot-alert strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.02rem;
+        }
+
+        .iot-alert p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .iot-section {
+            margin-bottom: 20px;
+        }
+
+        .chart-card {
+            padding: 20px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(16px);
+        }
+
+        .chart-card canvas {
+            width: 100%;
+            height: 320px;
+            max-height: 320px;
+            display: block;
+        }
+
+        .chart-placeholder {
+            color: var(--muted);
+            padding: 30px 0;
+            text-align: center;
+            font-size: 1rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .chart-card h2 {
+            margin: 0 0 12px;
+            font-size: 1.06rem;
+            color: white;
+        }
+
+        .sensor-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .sensor-table th,
+        .sensor-table td {
+            padding: 13px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sensor-table th {
+            color: #8fd9ff;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+        }
+
+        .sensor-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .sensor-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .status-chip.ok {
+            background: rgba(52, 211, 153, 0.16);
+            color: #d1fae5;
+        }
+
+        .status-chip.alert {
+            background: rgba(251, 113, 133, 0.18);
+            color: #ffe4e6;
+        }
+
+        .button-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            padding: 12px 16px;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 12px 24px rgba(34, 211, 238, 0.2);
+            text-decoration: none;
+        }
+
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(34, 211, 238, 0.24);
+        }
+
+        .button-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: none;
+        }
+
+        .hidden { display: none; }
+
+        .error-box {
+            background: rgba(127, 29, 29, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffe4e6;
+            padding: 16px 18px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 700px) {
+            .iot-dashboard {
+                padding: 16px 14px 28px;
+            }
+
+            .iot-hero {
+                padding: 18px;
+            }
+
+            .actions {
+                width: 100%;
+            }
+
+            .actions .button-primary,
+            .actions .button-secondary {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="iot-dashboard">
+        <section class="iot-hero">
+            <div class="iot-header">
+                <div>
+                    <div class="eyebrow">IoT intelligence</div>
+                    <h1>Tableau de bord IoT</h1>
+                    <p>Suivi des capteurs, alertes de maintenance prédictive et optimisation des ressources en temps réel.</p>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="button-primary" id="refresh-dashboard"><i class="fas fa-sync-alt"></i> Rafraîchir</button>
+                <a class="button-primary button-secondary" href="/frontend/farmer-dashboard.html">Retour au dashboard</a>
+            </div>
+        </section>
+
+        <div class="offline-sync-section">
+            <h3>📱 Synchronisation Hors-ligne</h3>
+            <p>Recevez un résumé de vos activités par SMS (zones hors-ligne)</p>
+            <button class="button-secondary" onclick="syncOfflineData()">
+                📩 Envoyer résumé par SMS
+            </button>
+        </div>
+
+        <div id="iot-error" class="error-box hidden"></div>
+
+        <div id="iot-alert" class="iot-alert hidden"></div>
+
+        <div class="iot-card-grid">
+            <div class="iot-card">
+                <div class="card-icon"><i class="fas fa-satellite-dish"></i></div>
+                <h2>Statut général</h2>
+                <p id="iot-status">Chargement en cours...</p>
+            </div>
+            <div class="iot-card">
+                <div class="card-icon"><i class="fas fa-wrench"></i></div>
+                <h2>Maintenance prévue</h2>
+                <p id="iot-maintenance">Chargement...</p>
+            </div>
+            <div class="iot-card">
+                <div class="card-icon"><i class="fas fa-brain"></i></div>
+                <h2>Recommandation</h2>
+                <p id="iot-action">Chargement...</p>
+            </div>
+            <div class="iot-card">
+                <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                <h2>Optimisation ressources</h2>
+                <p id="iot-resource">Chargement...</p>
+            </div>
+        </div>
+
+        <div class="iot-section chart-card">
+            <h2>Historique récent des capteurs</h2>
+            <canvas id="iot-readings-chart" height="120"></canvas>
+            <div id="iot-chart-placeholder" class="chart-placeholder hidden">Aucune donnée de capteur disponible.</div>
+        </div>
+
+        <div class="iot-section chart-card">
+            <h2>Dernières lectures de capteurs</h2>
+            <table class="sensor-table">
+                <thead>
+                    <tr>
+                        <th>Capteur</th>
+                        <th>Valeur</th>
+                        <th>Unité</th>
+                        <th>Localisation</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="sensor-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/frontend/sw.js')
+                .then(registration => console.log('Service Worker enregistré:', registration.scope))
+                .catch(error => console.error('Service Worker échec:', error));
+        }
+    </script>
+    <script src="app.js"></script>
+    <script src="iot-dashboard.js"></script>
+</body>
+</html>

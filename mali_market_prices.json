@@ -1,0 +1,35 @@
+{
+  "last_updated": "2026-07-24",
+  "source": "FAO FAOSTAT 2024 - Prix agricoles Mali",
+  "currency": "FCFA/kg",
+  "prices": {
+    "mil": 285.5,
+    "sorgho": 278.2,
+    "maïs": 295.8,
+    "riz": 425.3,
+    "arachide": 385.2,
+    "niébé": 405.1,
+    "coton": 725.0,
+    "blé": 315.7
+  },
+  "price_ranges": {
+    "mil": {"min": 250, "max": 320, "avg": 285},
+    "sorgho": {"min": 240, "max": 300, "avg": 270},
+    "maïs": {"min": 270, "max": 330, "avg": 300},
+    "riz": {"min": 380, "max": 480, "avg": 430},
+    "arachide": {"min": 350, "max": 420, "avg": 385},
+    "niébé": {"min": 360, "max": 450, "avg": 405},
+    "coton": {"min": 650, "max": 800, "avg": 725},
+    "blé": {"min": 280, "max": 350, "avg": 315}
+  },
+  "regional_variations": {
+    "Kayes": {"multiplier": 0.95},
+    "Koulikoro": {"multiplier": 1.0},
+    "Bamako": {"multiplier": 1.05},
+    "Ségou": {"multiplier": 0.98},
+    "Mopti": {"multiplier": 1.02},
+    "Tombouctou": {"multiplier": 1.15},
+    "Gao": {"multiplier": 1.12},
+    "Kidal": {"multiplier": 1.18}
+  }
+}

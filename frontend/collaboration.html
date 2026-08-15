@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSmart - Collaboration Virtuelle</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #020617;
+            --panel: rgba(7, 12, 29, 0.86);
+            --panel-strong: rgba(10, 18, 35, 0.98);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #7c3aed;
+            --accent-2: #22d3ee;
+            --accent-highlight: #34d399;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(124, 58, 237, 0.26), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.24), transparent 26%),
+                linear-gradient(135deg, #020617 0%, #07111f 48%, #0f172a 100%);
+        }
+
+        header {
+            padding: 24px 28px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            backdrop-filter: blur(18px);
+        }
+
+        header h1 {
+            font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+            letter-spacing: 0.02em;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--muted);
+            margin-top: 6px;
+            font-size: 0.96rem;
+            max-width: 740px;
+        }
+
+        header a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 12px 18px;
+            border-radius: 999px;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        header a:hover {
+            transform: translateY(-1px);
+            background: rgba(255,255,255,0.14);
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 24px;
+            padding: 0 28px 28px;
+        }
+
+        .panel {
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 28px;
+            padding: 24px;
+            min-height: 520px;
+            overflow: hidden;
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(18px);
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .panel h2 i {
+            margin-right: 10px;
+            color: var(--accent-2);
+        }
+
+        .video-container {
+            background: radial-gradient(circle at top left, rgba(34,211,238,0.22), transparent 35%),
+                        linear-gradient(180deg, rgba(0,0,0,0.85), rgba(16,24,47,0.95));
+            border-radius: 24px;
+            width: 100%;
+            height: 420px;
+            position: relative;
+            margin-bottom: 22px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        #remoteVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 24px;
+        }
+
+        .local-preview {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 140px;
+            height: 108px;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .local-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .panel-heading p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            max-width: 620px;
+            line-height: 1.5;
+        }
+
+        .status-pill {
+            align-self: center;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(34,211,238,0.16);
+            color: var(--accent-2);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            border: 1px solid rgba(34,211,238,0.25);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .summary-card {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .summary-card strong {
+            display: block;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .summary-card span {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            border-radius: 999px;
+            padding: 12px 18px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            box-shadow: 0 12px 28px rgba(34, 211, 238, 0.2);
+        }
+
+        .btn.secondary {
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .btn.danger {
+            background: rgba(251, 113, 133, 0.92);
+            color: white;
+        }
+
+        .btn.active {
+            background: rgba(52,211,153,0.18);
+            color: white;
+            border: 1px solid rgba(52,211,153,0.28);
+        }
+
+        .appointment-list {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .appointment-item {
+            background: rgba(255,255,255,0.05);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .appointment-item:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-1px);
+        }
+
+        .appointment-item.active {
+            background: rgba(34, 211, 238, 0.16);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+
+        .appointment-item strong {
+            display: block;
+            margin-bottom: 6px;
+            color: white;
+        }
+
+        .appointment-item small {
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .chat-messages {
+            max-height: 220px;
+            overflow-y: auto;
+            background: rgba(255,255,255,0.05);
+            padding: 16px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 16px;
+            color: var(--text);
+            max-width: 82%;
+            word-break: break-word;
+        }
+
+        .message.own {
+            text-align: right;
+            background: rgba(52,211,153,0.2);
+            margin-left: auto;
+        }
+
+        .chat-input {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 18px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .chat-input input:focus {
+            border-color: rgba(34,211,238,0.5);
+            box-shadow: 0 0 0 3px rgba(34,211,238,0.12);
+        }
+
+        .annotations-panel {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.12);
+            margin-bottom: 12px;
+        }
+
+        .annotations-panel h3 {
+            font-size: 0.98rem;
+            margin-bottom: 14px;
+            color: white;
+        }
+
+        .annotation-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 10px 14px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.06);
+            color: var(--text);
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .tool-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.12); }
+
+        .tool-btn.active {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(124, 58, 237, 0.18));
+            border-color: rgba(34,211,238,0.35);
+        }
+
+        .status {
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 18px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .farm-view {
+            background: linear-gradient(135deg, rgba(0,0,0,0.95), rgba(12, 28, 60, 0.98));
+            border-radius: 22px;
+            width: 100%;
+            height: 420px;
+            position: relative;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+        }
+
+        #farmCanvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 22px;
+            display: block;
+        }
+
+        @media (max-width: 1080px) {
+            .page-grid { grid-template-columns: 1fr; }
+            .video-container, .farm-view { height: 320px; }
+        }
+
+        @media (max-width: 720px) {
+            header { flex-direction: column; align-items: flex-start; }
+            .page-grid { padding: 0 16px 20px; }
+            .controls { justify-content: stretch; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-video"></i> Collaboration Virtuelle</h1>
+        <a href="/farmer-dashboard"><i class="fas fa-arrow-left"></i> Retour au tableau de bord</a>
+    </header>
+
+    <div class="page-grid">
+        <aside class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2><i class="fas fa-calendar-alt"></i> Rendez-vous</h2>
+                    <p>Planifiez et rejoignez votre session de collaboration avec un expert pour optimiser votre ferme.</p>
+                </div>
+                <span class="status-pill"><i class="fas fa-wifi"></i> Disponible</span>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <strong>Prochain RDV</strong>
+                    <span>Demain à 10:00</span>
+                </div>
+                <div class="summary-card">
+                    <strong>Experts actifs</strong>
+                    <span>2 connectés</span>
+                </div>
+                <div class="summary-card">
+                    <strong>Annotations</strong>
+                    <span>12 éléments</span>
+                </div>
+                <div class="summary-card">
+                    <strong>Statut</strong>
+                    <span>Prêt à démarrer</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn primary" id="createAppointment"><i class="fas fa-plus"></i> Créer RDV</button>
+                <button class="btn secondary" id="joinCall"><i class="fas fa-phone"></i> Rejoindre</button>
+                <button class="btn danger" id="endCall"><i class="fas fa-phone-slash"></i> Terminer</button>
+            </div>
+
+            <div class="status" id="connectionStatus">
+                <i class="fas fa-circle"></i> Non connecté
+            </div>
+
+            <div class="appointment-list" id="appointmentsList">
+                <!-- Appointments will be loaded here -->
+            </div>
+
+            <h2 style="margin-top: 26px;"><i class="fas fa-comments"></i> Chat en direct</h2>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Tapez votre message..." />
+                <button class="btn primary" id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </aside>
+
+        <main class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2><i class="fas fa-video"></i> Session Vidéo</h2>
+                    <p>Flux en direct et outils d'annotation pour inspecter vos parcelles ensemble.</p>
+                </div>
+            </div>
+
+            <div class="video-container">
+                <video id="remoteVideo" autoplay playsinline></video>
+                <div class="local-preview">
+                    <video id="localVideo" autoplay playsinline muted></video>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn secondary" id="toggleVideo"><i class="fas fa-video"></i> Caméra</button>
+                <button class="btn secondary" id="toggleAudio"><i class="fas fa-microphone"></i> Micro</button>
+                <button class="btn secondary" id="toggleScreen"><i class="fas fa-desktop"></i> Partage écran</button>
+                <button class="btn secondary" id="recordSession"><i class="fas fa-record-vinyl"></i> Enregistrer</button>
+            </div>
+
+            <div class="annotations-panel">
+                <h3><i class="fas fa-pencil-alt"></i> Outils d'annotation</h3>
+                <div class="annotation-tools">
+                    <button class="tool-btn active" data-tool="pointer"><i class="fas fa-mouse-pointer"></i></button>
+                    <button class="tool-btn" data-tool="arrow"><i class="fas fa-arrow-right"></i></button>
+                    <button class="tool-btn" data-tool="circle"><i class="fas fa-circle"></i></button>
+                    <button class="tool-btn" data-tool="text"><i class="fas fa-font"></i></button>
+                    <button class="tool-btn" data-tool="measure"><i class="fas fa-ruler"></i></button>
+                </div>
+                <div class="farm-view">
+                    <canvas id="farmCanvas"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Authentication
+        const accessTokenKey = 'accessToken';
+        let accessToken = null;
+
+        // Load token on page load
+        window.addEventListener('load', () => {
+            accessToken = localStorage.getItem(accessTokenKey);
+            if (!accessToken) {
+                // Redirect to login if no token
+                window.location.href = 'login.html';
+            }
+        });
+
+        // WebRTC and Collaboration Logic
+        class VirtualCollaboration {
+            constructor() {
+                this.peerConnection = null;
+                this.localStream = null;
+                this.remoteStream = null;
+                this.isRecording = false;
+                this.mediaRecorder = null;
+                this.recordedChunks = [];
+                this.currentAppointment = null;
+                this.annotations = [];
+                this.currentTool = 'pointer';
+
+                this.init();
+            }
+
+            async init() {
+                this.setupEventListeners();
+                this.loadAppointments();
+                this.initFarmCanvas();
+                this.updateConnectionStatus('Non connecté');
+            }
+
+            setupEventListeners() {
+                // Video controls
+                document.getElementById('toggleVideo').addEventListener('click', () => this.toggleVideo());
+                document.getElementById('toggleAudio').addEventListener('click', () => this.toggleAudio());
+                document.getElementById('toggleScreen').addEventListener('click', () => this.toggleScreenShare());
+                document.getElementById('recordSession').addEventListener('click', () => this.toggleRecording());
+
+                // Call controls
+                document.getElementById('createAppointment').addEventListener('click', () => this.createAppointment());
+                document.getElementById('joinCall').addEventListener('click', () => this.joinCall());
+                document.getElementById('endCall').addEventListener('click', () => this.endCall());
+
+                // Chat
+                document.getElementById('sendMessage').addEventListener('click', () => this.sendMessage());
+                document.getElementById('chatInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
+                });
+
+                // Annotation tools
+                document.querySelectorAll('.tool-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentTool = e.target.dataset.tool;
+                    });
+                });
+            }
+
+            async createAppointment() {
+                // For demo purposes, use fixed values instead of prompts
+                const expert = 'Souleymane TRAORE';
+                const date = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16); // Tomorrow
+                const topic = 'Consultation agricole virtuelle';
+
+                if (!expert || !date || !topic) return;
+
+                try {
+                    const response = await fetch('/api/collaboration/appointments/', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${accessToken}`
+                        },
+                        body: JSON.stringify({
+                            expert_name: expert,
+                            scheduled_at: date,
+                            topic: topic,
+                            farm_location: '12.6392,-8.0029'
+                        })
+                    });
+
+                    if (response.ok) {
+                        alert('Rendez-vous créé avec succès!');
+                        this.loadAppointments();
+                    } else {
+                        alert('Erreur lors de la création du rendez-vous');
+                    }
+                } catch (error) {
+                    console.error('Erreur création RDV:', error);
+                    alert('Erreur de connexion');
+                }
+            }
+
+            async loadAppointments() {
+                try {
+                    const response = await fetch('/api/collaboration/appointments/', {
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        }
+                    });
+                    const appointments = await response.json();
+
+                    const list = document.getElementById('appointmentsList');
+                    list.innerHTML = '';
+
+                    appointments.forEach(apt => {
+                        const item = document.createElement('div');
+                        item.className = 'appointment-item';
+                        item.innerHTML = `
+                            <strong>${apt.expert_name}</strong><br>
+                            <small>${new Date(apt.scheduled_at).toLocaleString()}</small><br>
+                            <small>${apt.topic}</small>
+                        `;
+                        item.addEventListener('click', (e) => this.selectAppointment(apt, e));
+                        list.appendChild(item);
+                    });
+                } catch (error) {
+                    console.error('Erreur chargement RDV:', error);
+                }
+            }
+
+            selectAppointment(appointment, event) {
+                this.currentAppointment = appointment;
+                document.querySelectorAll('.appointment-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                event.target.closest('.appointment-item').classList.add('active');
+            }
+
+            async joinCall() {
+                if (!this.currentAppointment) {
+                    alert('Veuillez sélectionner un rendez-vous');
+                    return;
+                }
+
+                try {
+                    this.updateConnectionStatus('Connexion en cours...');
+
+                    // Get user media
+                    this.localStream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: true
+                    });
+
+                    document.getElementById('localVideo').srcObject = this.localStream;
+
+                    // Initialize WebRTC
+                    this.peerConnection = new RTCPeerConnection({
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' }
+                        ]
+                    });
+
+                    // Add local stream
+                    this.localStream.getTracks().forEach(track => {
+                        this.peerConnection.addTrack(track, this.localStream);
+                    });
+
+                    // Handle remote stream
+                    this.peerConnection.ontrack = (event) => {
+                        if (event.streams && event.streams[0]) {
+                            document.getElementById('remoteVideo').srcObject = event.streams[0];
+                        }
+                    };
+
+                    // ICE candidate handling
+                    this.peerConnection.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            // Send ICE candidate to signaling server
+                            this.sendSignalingMessage({
+                                type: 'ice-candidate',
+                                data: event.candidate
+                            });
+                        }
+                    };
+
+                    // Create offer
+                    const offer = await this.peerConnection.createOffer();
+                    await this.peerConnection.setLocalDescription(offer);
+
+                    // Send offer to signaling server
+                    this.sendSignalingMessage({
+                        type: 'offer',
+                        data: offer
+                    });
+
+                    this.updateConnectionStatus('Connecté - En attente de l\'expert');
+
+                } catch (error) {
+                    console.error('Erreur connexion appel:', error);
+                    this.updateConnectionStatus('Erreur de connexion');
+                }
+            }
+
+            async sendSignalingMessage(message) {
+                try {
+                    await fetch('/api/collaboration/signaling/', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${accessToken}`
+                        },
+                        body: JSON.stringify({
+                            type: message.type,
+                            appointment_id: this.currentAppointment.id,
+                            message: message.data || message
+                        })
+                    });
+                } catch (error) {
+                    console.error('Erreur signaling:', error);
+                }
+            }
+
+            endCall() {
+                if (this.localStream) {
+                    this.localStream.getTracks().forEach(track => track.stop());
+                }
+                if (this.peerConnection) {
+                    this.peerConnection.close();
+                }
+                if (this.isRecording) {
+                    this.stopRecording();
+                }
+
+                document.getElementById('localVideo').srcObject = null;
+                document.getElementById('remoteVideo').srcObject = null;
+                this.updateConnectionStatus('Appel terminé');
+            }
+
+            toggleVideo() {
+                if (this.localStream) {
+                    const videoTrack = this.localStream.getVideoTracks()[0];
+                    videoTrack.enabled = !videoTrack.enabled;
+                    document.getElementById('toggleVideo').classList.toggle('active', videoTrack.enabled);
+                }
+            }
+
+            toggleAudio() {
+                if (this.localStream) {
+                    const audioTrack = this.localStream.getAudioTracks()[0];
+                    audioTrack.enabled = !audioTrack.enabled;
+                    document.getElementById('toggleAudio').classList.toggle('active', audioTrack.enabled);
+                }
+            }
+
+            async toggleScreenShare() {
+                try {
+                    if (this.localStream && this.localStream.getVideoTracks().some(track => track.label.includes('screen'))) {
+                        // Stop screen sharing
+                        const screenTrack = this.localStream.getVideoTracks().find(track => track.label.includes('screen'));
+                        screenTrack.stop();
+                        this.localStream.removeTrack(screenTrack);
+
+                        // Add back camera
+                        const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        const cameraTrack = cameraStream.getVideoTracks()[0];
+                        this.localStream.addTrack(cameraTrack);
+                        document.getElementById('localVideo').srcObject = this.localStream;
+                    } else {
+                        // Start screen sharing
+                        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                        const screenTrack = screenStream.getVideoTracks()[0];
+
+                        // Replace video track
+                        const videoTrack = this.localStream.getVideoTracks()[0];
+                        this.localStream.removeTrack(videoTrack);
+                        this.localStream.addTrack(screenTrack);
+
+                        document.getElementById('localVideo').srcObject = this.localStream;
+
+                        screenTrack.onended = () => {
+                            this.toggleScreenShare(); // Switch back to camera
+                        };
+                    }
+                } catch (error) {
+                    console.error('Erreur partage écran:', error);
+                }
+            }
+
+            toggleRecording() {
+                if (this.isRecording) {
+                    this.stopRecording();
+                } else {
+                    this.startRecording();
+                }
+            }
+
+            startRecording() {
+                if (!this.localStream) return;
+
+                this.recordedChunks = [];
+                this.mediaRecorder = new MediaRecorder(this.localStream);
+
+                this.mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        this.recordedChunks.push(event.data);
+                    }
+                };
+
+                this.mediaRecorder.onstop = () => {
+                    const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `collaboration-session-${Date.now()}.webm`;
+                    a.click();
+                };
+
+                this.mediaRecorder.start();
+                this.isRecording = true;
+                document.getElementById('recordSession').classList.add('active');
+                document.getElementById('recordSession').innerHTML = '<i class="fas fa-stop"></i> Arrêter';
+            }
+
+            stopRecording() {
+                if (this.mediaRecorder && this.isRecording) {
+                    this.mediaRecorder.stop();
+                    this.isRecording = false;
+                    document.getElementById('recordSession').classList.remove('active');
+                    document.getElementById('recordSession').innerHTML = '<i class="fas fa-record-vinyl"></i> Enregistrer';
+                }
+            }
+
+            sendMessage() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                if (!message) return;
+
+                this.addMessage(message, true);
+                input.value = '';
+
+                // Send to server
+                const userName = 'Agriculteur Mali';
+                fetch('/api/collaboration/chat/', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({
+                        appointment_id: this.currentAppointment?.id,
+                        message: message,
+                        sender_name: userName,
+                        message_type: 'text'
+                    })
+                }).catch(error => console.error('Erreur envoi message:', error));
+            }
+
+            addMessage(message, isOwn = false) {
+                const messages = document.getElementById('chatMessages');
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${isOwn ? 'own' : ''}`;
+                msgDiv.textContent = message;
+                messages.appendChild(msgDiv);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            initFarmCanvas() {
+                const canvas = document.getElementById('farmCanvas');
+                const ctx = canvas.getContext('2d');
+
+                // Set canvas size
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+
+                // Draw farm visualization
+                this.drawFarm(ctx);
+
+                // Add click handler for annotations
+                canvas.addEventListener('click', (e) => {
+                    if (this.currentTool !== 'pointer') {
+                        this.addAnnotation(e.offsetX, e.offsetY, this.currentTool);
+                    }
+                });
+            }
+
+            drawFarm(ctx) {
+                const width = ctx.canvas.width;
+                const height = ctx.canvas.height;
+
+                // Clear canvas
+                ctx.fillStyle = '#2d5a27';
+                ctx.fillRect(0, 0, width, height);
+
+                // Draw field boundaries
+                ctx.strokeStyle = '#8B4513';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(50, 50, width - 100, height - 100);
+
+                // Draw irrigation points
+                ctx.fillStyle = '#4169E1';
+                ctx.beginPath();
+                ctx.arc(150, 150, 8, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(width - 150, height - 150, 8, 0, 2 * Math.PI);
+                ctx.fill();
+
+                // Draw annotations
+                this.annotations.forEach(annotation => {
+                    this.drawAnnotation(ctx, annotation);
+                });
+            }
+
+            addAnnotation(x, y, tool) {
+                const annotation = { x, y, tool, z: 0, timestamp: Date.now() };
+                this.annotations.push(annotation);
+
+                // Send annotation to remote peer
+                this.sendSignalingMessage({
+                    type: 'annotation',
+                    data: annotation
+                });
+
+                // Redraw canvas
+                this.drawFarm(document.getElementById('farmCanvas').getContext('2d'));
+            }
+
+            drawAnnotation(ctx, annotation) {
+                ctx.save();
+                ctx.strokeStyle = '#FF6B6B';
+                ctx.lineWidth = 2;
+
+                switch (annotation.tool) {
+                    case 'arrow':
+                        ctx.beginPath();
+                        ctx.moveTo(annotation.x - 20, annotation.y);
+                        ctx.lineTo(annotation.x + 20, annotation.y);
+                        ctx.moveTo(annotation.x + 15, annotation.y - 5);
+                        ctx.lineTo(annotation.x + 20, annotation.y);
+                        ctx.lineTo(annotation.x + 15, annotation.y + 5);
+                        ctx.stroke();
+                        break;
+                    case 'circle':
+                        ctx.beginPath();
+                        ctx.arc(annotation.x, annotation.y, 20, 0, 2 * Math.PI);
+                        ctx.stroke();
+                        break;
+                    case 'text':
+                        ctx.fillStyle = '#FF6B6B';
+                        ctx.font = '16px Arial';
+                        ctx.fillText('Texte', annotation.x, annotation.y);
+                        break;
+                    case 'measure':
+                        ctx.beginPath();
+                        ctx.moveTo(annotation.x - 30, annotation.y);
+                        ctx.lineTo(annotation.x + 30, annotation.y);
+                        ctx.moveTo(annotation.x - 25, annotation.y - 5);
+                        ctx.lineTo(annotation.x - 25, annotation.y + 5);
+                        ctx.moveTo(annotation.x + 25, annotation.y - 5);
+                        ctx.lineTo(annotation.x + 25, annotation.y + 5);
+                        ctx.stroke();
+                        ctx.fillStyle = '#FF6B6B';
+                        ctx.font = '12px Arial';
+                        ctx.fillText('50m', annotation.x, annotation.y - 10);
+                        break;
+                }
+                ctx.restore();
+            }
+
+            updateConnectionStatus(status) {
+                const statusEl = document.getElementById('connectionStatus');
+                statusEl.innerHTML = `<i class="fas fa-circle"></i> ${status}`;
+
+                // Update color based on status
+                if (status.includes('Connecté')) {
+                    statusEl.style.background = 'rgba(76, 175, 80, 0.2)';
+                } else if (status.includes('Erreur')) {
+                    statusEl.style.background = 'rgba(244, 67, 54, 0.2)';
+                } else {
+                    statusEl.style.background = 'rgba(255,255,255,0.1)';
+                }
+            }
+        }
+
+        // Initialize collaboration when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new VirtualCollaboration();
+        });
+    </script>
+</body>
+</html>

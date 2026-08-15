@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Client - AgroSmart</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/frontend/i18n.js"></script>
+    <script src="/frontend/language-selector.js"></script>
+    <script src="/frontend/push-notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof languageSelector !== 'undefined') {
+                languageSelector.init();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>🛒 Tableau de bord client</h1>
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <button id="logout-btn" class="btn-secondary">Déconnexion</button>
+            </div>
+        </header>
+
+        <nav class="dashboard-nav">
+            <a href="#overview" class="nav-link active">Aperçu</a>
+            <a href="#marketplace" class="nav-link">Marketplace</a>
+            <a href="#orders" class="nav-link">Mes Commandes</a>
+            <a href="#requests" class="nav-link">Mes Demandes</a>
+            <a href="#favorites" class="nav-link">Favoris</a>
+            <a href="#reviews" class="nav-link">Avis</a>
+        </nav>
+
+        <main class="dashboard-content">
+            <!-- Section Aperçu -->
+            <section id="overview" class="dashboard-section active">
+                <h2>📊 Aperçu de vos activités</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Commandes Totales</h3>
+                        <div class="stat-value" id="total-orders">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Dépenses Totales</h3>
+                        <div class="stat-value" id="total-spent">0 XOF</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avis Donnés</h3>
+                        <div class="stat-value" id="reviews-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Articles Favoris</h3>
+                        <div class="stat-value" id="favorites-count">0</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-banner">
+                    <div class="banner-copy">
+                        <span class="badge">Offre Premium</span>
+                        <h3>Priorisez vos achats intelligents et obtenez des remises sur vos meilleures cultures.</h3>
+                        <p>Explorez les offres recommandées et gérez vos commandes avec une interface claire, rapide et adaptée à vos besoins agricoles.</p>
+                    </div>
+                    <button id="best-offers-btn" class="btn-primary">Voir les meilleures offres</button>
+                </div>
+
+                <div class="offline-sync-section">
+                    <h3>📱 Synchronisation Hors-ligne</h3>
+                    <p>Recevez un résumé de vos activités par SMS (zones hors-ligne)</p>
+                    <button class="btn-secondary" onclick="syncOfflineData()">
+                        📩 Envoyer résumé par SMS
+                    </button>
+                </div>
+
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <h4>Insights du marché</h4>
+                        <p>Vos articles les plus achetés sont les semences de haute qualité et les solutions de fertilisation intelligente.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h4>Action recommandée</h4>
+                        <p>Sécurisez les meilleures offres du jour pour accélérer votre approvisionnement et réduire les délais de récolte.</p>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Dépenses par Catégorie</h3>
+                        <canvas id="spending-chart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Évolution des Commandes</h3>
+                        <canvas id="orders-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Marketplace -->
+            <section id="marketplace" class="dashboard-section">
+                <h2>🛍️ Explorer le Marketplace</h2>
+                <div class="marketplace-filters">
+                    <input type="text" id="search-input" placeholder="Rechercher des produits...">
+                    <select id="category-filter">
+                        <option value="">Toutes les catégories</option>
+                        <option value="cereales">Céréales</option>
+                        <option value="legumes">Légumes</option>
+                        <option value="fruits">Fruits</option>
+                        <option value="tubercules">Tubercules</option>
+                    </select>
+                    <input type="number" id="min-price" placeholder="Prix min">
+                    <input type="number" id="max-price" placeholder="Prix max">
+                    <button id="search-btn" class="btn-primary">Rechercher</button>
+                </div>
+                <div id="marketplace-listings" class="items-grid">
+                    <!-- Les annonces seront chargées dynamiquement -->
+                </div>
+            </section>
+
+            <!-- Section Commandes -->
+            <section id="orders" class="dashboard-section">
+                <h2>📦 Mes Commandes</h2>
+                <div id="orders-list" class="items-grid">
+                    <!-- Les commandes seront chargées dynamiquement -->
+                </div>
+            </section>
+
+            <!-- Section Demandes -->
+            <section id="requests" class="dashboard-section">
+                <h2>📋 Mes Demandes de Prêt et d'Assurance</h2>
+                <div id="loan-requests-list" class="items-grid"></div>
+                <div id="insurance-requests-list" class="items-grid"></div>
+            </section>
+
+            <!-- Section Favoris -->
+            <section id="favorites" class="dashboard-section">
+                <h2>❤️ Mes Favoris</h2>
+                <div id="favorites-list" class="items-grid">
+                    <!-- Les favoris seront chargés dynamiquement -->
+                </div>
+            </section>
+
+            <!-- Section Avis -->
+            <section id="reviews" class="dashboard-section">
+                <h2>⭐ Mes Avis</h2>
+                <div id="reviews-list" class="items-grid">
+                    <!-- Les avis seront chargés dynamiquement -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal pour les détails d'une annonce -->
+    <div id="listing-modal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close">&times;</span>
+            <div class="modal-scrollable-area">
+                <div id="listing-details">
+                    <!-- Les détails seront chargés dynamiquement -->
+                </div>
+            </div>
+            <div class="modal-fixed-actions">
+                <!-- Les boutons seront ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour la commande d'un produit -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="order-form-container">
+                <!-- Le formulaire de commande sera chargé dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour le détail d'une commande -->
+    <div id="order-detail-modal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close">&times;</span>
+            <div id="order-detail-content">
+                <!-- Les détails de commande seront chargés dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/frontend/sw.js')
+                .then(registration => console.log('Service Worker enregistré:', registration.scope))
+                .catch(error => console.error('Service Worker échec:', error));
+        }
+    </script>
+    <script src="app.js?v=3"></script>
+    <script src="client-dashboard.js?v=3"></script>
+</body>
+</html>

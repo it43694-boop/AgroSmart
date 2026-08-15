@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: agro_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: agro_db_prod
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agro_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus_prod.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus_alerts.yml:/etc/prometheus/rules/alerts.yml
+      - prometheus_prod_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - grafana_prod_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx_prod.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - app
+    restart: always
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://agro_user:${DB_PASSWORD}@postgres:5432/agro_db_prod
+      REDIS_URL: redis://redis:6379
+      ENVIRONMENT: production
+      LOG_LEVEL: warning
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:
+  prometheus_prod_data:
+  grafana_prod_data:

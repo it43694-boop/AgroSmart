@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: AgroSmart-backend
+    env: docker
+    plan: starter
+    repo: https://github.com/it43694-boop/AgroSmart.git
+    branch: main
+    buildCommand: ''
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromRenderSecret: false
+      - key: SECRET_KEY
+        fromRenderSecret: false
+      - key: SUPABASE_URL
+        fromRenderSecret: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        fromRenderSecret: false
+      - key: REDIS_URL
+        fromRenderSecret: false
+    healthCheckPath: /health
+    instanceSize: free
+    autoDeploy: true

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSmart - Connexion</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="/frontend/manifest.json">
+    <style>
+        :root {
+            --bg: #07111f;
+            --surface: rgba(10, 20, 36, 0.82);
+            --surface-soft: rgba(255, 255, 255, 0.07);
+            --accent: #34d399;
+            --accent-strong: #10b981;
+            --text: #f8fafc;
+            --muted: #cbd5e1;
+            --border: rgba(255, 255, 255, 0.14);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            margin: 0;
+            padding: 24px;
+            min-height: 100vh;
+            font-family: Inter, "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(52, 211, 153, 0.25), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.2), transparent 26%),
+                var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .panel {
+            width: min(1100px, 100%);
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            border-radius: 32px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            box-shadow: 0 24px 80px rgba(2, 8, 23, 0.38);
+            overflow: hidden;
+            backdrop-filter: blur(24px);
+        }
+        .hero-panel {
+            padding: 42px 36px;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.28), rgba(15, 23, 42, 0.95));
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .hero-panel h1 {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+        .hero-panel p { color: var(--muted); line-height: 1.7; }
+        .badge {
+            display: inline-flex;
+            align-self: flex-start;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.12);
+            color: #d1fae5;
+            font-size: 0.84rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .hero-points {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .hero-points div {
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.07);
+            color: #e2e8f0;
+        }
+        .form-panel {
+            padding: 42px 36px;
+            background: rgba(255,255,255,0.03);
+        }
+        .form-header { margin-bottom: 24px; }
+        .form-header h2 { font-size: 1.4rem; margin-bottom: 8px; }
+        .form-header p { color: var(--muted); font-size: 0.95rem; }
+        .field { margin-bottom: 16px; }
+        .field label { display: block; margin-bottom: 8px; font-size: 0.92rem; color: #e2e8f0; }
+        .field input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.06);
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+        }
+        .field input:focus {
+            border-color: rgba(52, 211, 153, 0.55);
+            box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.16);
+            background: rgba(255,255,255,0.09);
+        }
+        .field input::placeholder { color: rgba(255,255,255,0.45); }
+        button {
+            width: 100%;
+            padding: 14px 16px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: #042f2e;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(52, 211, 153, 0.22);
+        }
+        button:hover { transform: translateY(-1px); }
+        .error-message {
+            display: none;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(248, 113, 113, 0.14);
+            color: #fecaca;
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+        .error-message.visible { display: block; }
+        .login-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+        .login-actions a { color: #bbf7d0; text-decoration: none; font-weight: 600; }
+        .login-actions a:hover { text-decoration: underline; }
+        @media (max-width: 840px) {
+            .panel { grid-template-columns: 1fr; }
+            .hero-panel { padding-bottom: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <section class="hero-panel">
+            <div>
+                <div class="badge">AgroSmart</div>
+                <h1>Accédez à votre espace agricole avec élégance.</h1>
+                <p>Une nouvelle expérience connectée pour piloter vos activités, suivre les conditions de culture et prendre des décisions éclairées.</p>
+                <div class="hero-points">
+                    <div>✅ Conseils en temps réel</div>
+                    <div>✅ Interface fluide et moderne</div>
+                    <div>✅ Accès rapide selon votre profil</div>
+                </div>
+            </div>
+        </section>
+        <section class="form-panel">
+            <div class="form-header">
+                <h2>Bienvenue</h2>
+                <p>Connectez-vous pour accéder à votre tableau de bord.</p>
+            </div>
+            <div id="login-error" class="error-message"></div>
+            <form id="login-form">
+                <div class="field">
+                    <label for="email">Adresse email</label>
+                    <input type="email" id="email" name="username" placeholder="admin@agro-smart.com">
+                </div>
+                <div class="field">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="Votre mot de passe">
+                </div>
+                <div class="field">
+                    <label for="mfa-code">Code MFA (si activé)</label>
+                    <input type="text" id="mfa-code" name="mfa_code" placeholder="Entrez votre code MFA">
+                </div>
+                <div class="field">
+                    <label for="admin-code">Code administrateur</label>
+                    <input type="text" id="admin-code" name="admin_code" placeholder="Code unique administrateur">
+                </div>
+                <button type="submit"><i class="fas fa-right-to-bracket"></i> Se connecter</button>
+            </form>
+            <div class="login-actions">
+                <span>Besoin d'un compte ?</span>
+                <a href="/signup">Créer un compte</a>
+            </div>
+            <div class="login-actions">
+                <span>Vous devez activer la MFA pour Admin, Banque, Assurance ou Client.</span>
+                <button id="mfa-setup-button" type="button" style="background:none;border:none;color:#bbf7d0;font-weight:600;cursor:pointer;padding:0;">Configurer la MFA</button>
+            </div>
+            <section id="mfa-setup-panel" style="display:none;margin-top:24px;padding:18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:18px;">
+                <div class="field">
+                    <label for="mfa-username">Email / Identifiant</label>
+                    <input type="text" id="mfa-username" placeholder="Votre email ou identifiant">
+                </div>
+                <div class="field">
+                    <label for="mfa-password">Mot de passe</label>
+                    <input type="password" id="mfa-password" placeholder="Votre mot de passe">
+                </div>
+                <div class="field">
+                    <button id="start-mfa-setup" type="button" class="button">Démarrer la configuration MFA</button>
+                </div>
+                <div id="mfa-qr-container" style="display:none;">
+                    <div style="margin-bottom:12px;color:#cbd5e1;">Scannez ce QR dans votre application d'authentification.</div>
+                    <img id="mfa-qr-image" src="" alt="QR code MFA" style="width:100%;max-width:260px;border-radius:18px;background:#fff;padding:12px;" />
+                    <div id="mfa-backup-codes" style="display:none;margin-top:14px;color:#cbd5e1;">
+                        <strong>Codes de secours :</strong>
+                        <ul id="mfa-backup-list" style="margin-top:8px;list-style:none;padding-left:0;"></ul>
+                    </div>
+                    <div class="field" style="margin-top:18px;">
+                        <label for="mfa-totp-code">Code TOTP</label>
+                        <input type="text" id="mfa-totp-code" placeholder="Entrez le code affiché par l'app">
+                    </div>
+                    <button id="confirm-mfa-setup" type="button" class="button" style="margin-top:8px;">Valider et activer MFA</button>
+                    <div id="mfa-setup-message" style="margin-top:14px;color:#bbf7d0;display:none;"></div>
+                </div>
+            </section>
+        </section>
+    </div>
+    <script src="/frontend/pwa-register.js"></script>
+    <script src="/frontend/login.js?v=2" defer></script>
+</body>
+</html>

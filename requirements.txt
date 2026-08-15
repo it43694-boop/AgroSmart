@@ -1,0 +1,59 @@
+# Dependances principales AgroSmart (Python 3.10+ / 3.13 compatible)
+fastapi==0.111.1
+uvicorn[standard]==0.24.0
+uvloop==0.19.0
+httptools==0.6.1
+SQLAlchemy>=2.0.22,<2.1
+psycopg2-binary==2.9.10
+python-dotenv==1.0.0
+pydantic==2.8.0
+requests==2.31.0
+cachetools>=5.0.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.7
+web3==6.11.0
+pandas>=2.0.0
+redis>=5.0.0
+Pillow>=10.0.0
+structlog>=23.0.0
+prometheus_client>=0.16.0
+numpy>=1.26.0
+joblib>=1.3.0
+alembic>=1.13.0
+python-json-logger>=2.0.7
+
+# Nouvelles dépendances pour features avancées
+pyotp>=2.9.0
+qrcode>=7.4.2
+twilio>=8.11.0
+africastalking>=1.2.8
+firebase-admin>=6.0.0
+
+# ============ MODULE DEPENDENCIES ============
+# Module 1: AI & Analytics
+scikit-learn>=1.3.0
+tensorflow>=2.14.0
+xgboost>=2.0.0
+lightgbm>=4.1.0
+
+# Module 3: Insurance & Derivatives (numpy/scipy for math)
+scipy>=1.11.0
+
+# Module 4: Integrations
+kafka-python==2.0.2
+stripe==7.8.0
+paho-mqtt==1.6.1
+
+# Module 5: Carbon & Impact
+reportlab>=4.0.0
+
+# Module 6: Export & Compliance
+pypdf>=3.18.0
+
+# Module 7: DAO (blockchain already in web3)
+eth-account>=0.10.0
+eth-keys>=0.5.0
+
+# Monitoring & Observability
+sentry-sdk>=1.38.0

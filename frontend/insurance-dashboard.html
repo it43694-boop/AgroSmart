@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Assurance - AgroSmart</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/frontend/i18n.js"></script>
+    <script src="/frontend/language-selector.js"></script>
+    <script src="/frontend/push-notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof languageSelector !== 'undefined') {
+                languageSelector.init();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>🛡️ Tableau de bord assurance</h1>
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <button id="logout-btn" class="btn-secondary">Déconnexion</button>
+            </div>
+        </header>
+
+        <div class="offline-sync-section">
+            <h3>📱 Synchronisation Hors-ligne</h3>
+            <p>Recevez un résumé de vos activités par SMS (zones hors-ligne)</p>
+            <button class="btn-secondary" onclick="syncOfflineData()">
+                📩 Envoyer résumé par SMS
+            </button>
+        </div>
+
+        <nav class="dashboard-nav">
+            <a href="#overview" class="nav-link active">Aperçu</a>
+            <a href="#insurance-requests" class="nav-link">Demandes d'Assurance</a>
+            <a href="#approved-insurances" class="nav-link">Assurances Approuvées</a>
+            <a href="#claims" class="nav-link">Sinistres</a>
+        </nav>
+
+        <main class="dashboard-content">
+            <!-- Section Aperçu -->
+            <section id="overview" class="dashboard-section active">
+                <h2>📊 Aperçu des Activités d'Assurance</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Demandes en Attente</h3>
+                        <div class="stat-value" id="pending-requests">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Assurances Approuvées</h3>
+                        <div class="stat-value" id="approved-insurances-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Prime Totale</h3>
+                        <div class="stat-value" id="total-premium">0 XOF</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Couverture Totale</h3>
+                        <div class="stat-value" id="total-coverage">0 XOF</div>
+                    </div>
+                </div>
+                <div class="dashboard-banner">
+                    <div class="banner-copy">
+                        <span class="badge">Couverture Elite</span>
+                        <h3>Optimisez les risques avec une gestion d’assurance claire et proactive.</h3>
+                        <p>Suivez les demandes, priorisez les sinistres et proposez les meilleures couvertures en quelques clics.</p>
+                    </div>
+                    <button id="contracts-btn" class="btn-primary">Voir les contrats clés</button>
+                </div>
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <h4>Indice de risque rapide</h4>
+                        <p>Les régions les plus exposées aux intempéries sont mises en évidence pour accélérer l’analyse.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h4>Réduction des délais</h4>
+                        <p>Améliorez la validation des dossiers grâce à un accès instantané aux données de sinistre.</p>
+                    </div>
+                </div>
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Tendance des Primes</h3>
+                        <canvas id="premium-chart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Sinistres par Région</h3>
+                        <canvas id="claims-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Demandes d'Assurance -->
+            <section id="insurance-requests" class="dashboard-section">
+                <h2>📋 Demandes d'Assurance en Attente</h2>
+                <div id="pending-insurances-list" class="items-grid">
+                    <!-- Les demandes seront chargées dynamiquement -->
+                </div>
+            </section>
+
+            <!-- Section Assurances Approuvées -->
+            <section id="approved-insurances" class="dashboard-section">
+                <h2>✅ Assurances Approuvées</h2>
+                <div id="approved-insurances-list" class="items-grid">
+                    <!-- Les assurances approuvées seront chargées dynamiquement -->
+                </div>
+            </section>
+
+            <!-- Section Sinistres -->
+            <section id="claims" class="dashboard-section">
+                <h2>🚨 Gestion des Sinistres</h2>
+                <div id="claims-list" class="items-grid">
+                    <div class="item-card">
+                        <h4>Suivi des alertes sinistres</h4>
+                        <p>Les demandes et incidents sont surveillés en temps réel. Restez informé pour agir immédiatement sur chaque sinistre potentiel.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/frontend/sw.js')
+                .then(registration => console.log('Service Worker enregistré:', registration.scope))
+                .catch(error => console.error('Service Worker échec:', error));
+        }
+    </script>
+    <script src="app.js"></script>
+    <script src="insurance-dashboard.js"></script>
+</body>
+</html>

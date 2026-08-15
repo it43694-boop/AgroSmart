@@ -1,0 +1,108 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agro-smart-staging
+---
+# ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agro-api-config
+  namespace: agro-smart-staging
+data:
+  ENVIRONMENT: staging
+  LOG_LEVEL: debug
+  REDIS_URL: redis://redis-service:6379
+  DATABASE_URL: postgresql://agro_user:password@postgres-service:5432/agro_db_staging
+---
+# Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: agro-api-secrets
+  namespace: agro-smart-staging
+type: Opaque
+stringData:
+  DATABASE_URL: postgresql://agro_user:${DB_PASSWORD}@postgres-service:5432/agro_db_staging
+  REDIS_URL: redis://redis-service:6379
+  SECRET_KEY: ${SECRET_KEY}
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+---
+# Staging Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agro-api-staging
+  namespace: agro-smart-staging
+  labels:
+    app: agro-api
+    environment: staging
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: agro-api
+      environment: staging
+  template:
+    metadata:
+      labels:
+        app: agro-api
+        environment: staging
+    spec:
+      containers:
+      - name: app
+        image: ${DOCKER_REGISTRY}/agro-smart:develop
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8000
+        - name: metrics
+          containerPort: 8001
+        envFrom:
+        - configMapRef:
+            name: agro-api-config
+        - secretRef:
+            name: agro-api-secrets
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 30
+---
+# Staging Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: agro-api-staging-service
+  namespace: agro-smart-staging
+spec:
+  type: ClusterIP
+  selector:
+    app: agro-api
+    environment: staging
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  - name: metrics
+    port: 8001
+    targetPort: metrics

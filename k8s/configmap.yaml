@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agrosmart-config
+data:
+  ENVIRONMENT: "production"
+  ALGORITHM: "HS256"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "60"
+  MARKET_API_KEY: ""
+  SATELLITE_API_KEY: ""
+  SMTP_HOST: ""
+  SMTP_PORT: "587"
+  RATE_LIMIT_REQUESTS: "120"
+  RATE_LIMIT_WINDOW: "60"
+  LOG_LEVEL: "info"

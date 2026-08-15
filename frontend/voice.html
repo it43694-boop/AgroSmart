@@ -1,0 +1,1128 @@
+<!-- Voice Interface - AgroSmart Nexus -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Vocale - AgroSmart Nexus</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #040816;
+            --panel: rgba(10, 16, 35, 0.82);
+            --panel-strong: rgba(15, 24, 46, 0.95);
+            --line: rgba(255, 255, 255, 0.12);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #7c3aed;
+            --accent-2: #22d3ee;
+            --accent-3: #34d399;
+            --danger: #fb7185;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background:
+                radial-gradient(circle at top left, rgba(124, 58, 237, 0.35), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.22), transparent 24%),
+                linear-gradient(135deg, #020617 0%, #07111f 50%, #0f172a 100%);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            inset: auto;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            top: -80px;
+            left: -80px;
+            background: var(--accent);
+        }
+
+        body::after {
+            bottom: -80px;
+            right: -80px;
+            background: var(--accent-2);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: min(980px, 100%);
+            padding: 28px;
+            border-radius: 32px;
+            background: rgba(3, 8, 24, 0.82);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.36);
+            backdrop-filter: blur(22px);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(124,58,237,0.34), rgba(34,211,238,0.28));
+            border: 1px solid rgba(255,255,255,0.16);
+            font-size: 24px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        .eyebrow {
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            color: var(--accent-2);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        h1 {
+            font-size: clamp(1.45rem, 2vw, 1.95rem);
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 0.96rem;
+        }
+
+        .ghost-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            color: var(--text);
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.10);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .ghost-link:hover {
+            transform: translateY(-1px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .language-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            padding: 10px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
+        }
+
+        .lang-btn:hover {
+            border-color: rgba(34,211,238,0.35);
+            background: rgba(34,211,238,0.13);
+            transform: translateY(-1px);
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-color: transparent;
+            box-shadow: 0 12px 26px rgba(34,211,238,0.22);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(52,211,153,0.12);
+            color: #d1fae5;
+            border: 1px solid rgba(52,211,153,0.2);
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .status-pill .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-3);
+            box-shadow: 0 0 0 0 rgba(52,211,153,0.7);
+            animation: pulseDot 1.8s infinite;
+        }
+
+        @keyframes pulseDot {
+            0% { box-shadow: 0 0 0 0 rgba(52,211,153,0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(52,211,153,0); }
+            100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 18px;
+        }
+
+        .panel {
+            border-radius: 24px;
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+            border: 1px solid var(--line);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        .panel-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent-2);
+            margin-bottom: 16px;
+        }
+
+        .voice-interface {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 22px 16px 18px;
+            text-align: center;
+        }
+
+        .mic-shell {
+            position: relative;
+            display: grid;
+            place-items: center;
+            padding: 16px;
+        }
+
+        .mic-shell::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.08);
+            animation: spin 8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .mic-button {
+            width: 128px;
+            height: 128px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            margin: 20px auto;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+            font-size: 48px;
+            background: linear-gradient(135deg, rgba(124,58,237,0.95), rgba(34,211,238,0.92));
+            box-shadow: 0 18px 40px rgba(34,211,238,0.28);
+            color: white;
+        }
+
+        .mic-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 22px 46px rgba(34,211,238,0.34);
+        }
+
+        .mic-button.recording {
+            background: linear-gradient(135deg, #fb7185, #f43f5e);
+            box-shadow: 0 14px 34px rgba(244, 63, 94, 0.3);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        .status-text {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-3);
+            margin-right: 8px;
+            vertical-align: middle;
+            animation: blink 0.9s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .transcription-box {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 16px;
+            min-height: 118px;
+            max-height: 160px;
+            overflow-y: auto;
+            margin-bottom: 14px;
+        }
+
+        .transcription-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--muted);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .transcription-text {
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .transcription-text.partial {
+            color: var(--accent-2);
+            font-style: italic;
+        }
+
+        .manual-input-panel {
+            margin-top: 6px;
+            text-align: left;
+        }
+
+        .manual-input-panel textarea {
+            width: 100%;
+            min-height: 92px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            resize: vertical;
+            margin-top: 8px;
+            background: rgba(15,23,42,0.82);
+            color: var(--text);
+        }
+
+        .manual-input-panel textarea:focus {
+            outline: none;
+            border-color: rgba(34,211,238,0.5);
+            box-shadow: 0 0 0 3px rgba(34,211,238,0.16);
+        }
+
+        .manual-input-panel button {
+            margin-top: 10px;
+        }
+
+        .response-box {
+            margin: 18px 0;
+            padding: 16px 18px;
+            border-radius: 20px;
+            background: linear-gradient(90deg, rgba(124,58,237,0.2), rgba(34,211,238,0.12));
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .response-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent-2);
+            margin-bottom: 8px;
+        }
+
+        .response-text {
+            color: var(--text);
+            line-height: 1.65;
+            font-size: 0.98rem;
+        }
+
+        .play-button {
+            margin-top: 12px;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            box-shadow: 0 10px 24px rgba(34,211,238,0.2);
+        }
+
+        .play-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(34,211,238,0.25);
+        }
+
+        .play-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            padding: 12px 14px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            box-shadow: 0 12px 24px rgba(34,211,238,0.2);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 16px 30px rgba(34,211,238,0.26);
+        }
+
+        .command-history {
+            margin-top: 18px;
+            padding: 18px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .command-history h3 {
+            color: var(--text);
+            margin-bottom: 12px;
+            font-size: 0.96rem;
+            font-weight: 700;
+        }
+
+        .history-item {
+            background: rgba(255,255,255,0.04);
+            padding: 12px 13px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent-2);
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateX(4px);
+        }
+
+        .history-time {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .history-text {
+            color: var(--text);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            background: rgba(8, 15, 35, 0.95);
+            color: white;
+            padding: 14px 18px;
+            border-radius: 16px;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+            animation: slideIn 0.25s ease-out;
+            z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(360px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            background: rgba(7, 92, 65, 0.95);
+        }
+
+        .toast.error {
+            background: rgba(127, 29, 29, 0.96);
+        }
+
+        .toast.info {
+            background: rgba(39, 49, 120, 0.96);
+        }
+
+        @media (max-width: 800px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 14px;
+            }
+
+            .container {
+                padding: 18px;
+                border-radius: 24px;
+            }
+
+            .hero {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .mic-button {
+                width: 108px;
+                height: 108px;
+                font-size: 42px;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .language-selector {
+                gap: 6px;
+            }
+
+            .lang-btn {
+                font-size: 0.85rem;
+                padding: 9px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="brand">
+                <div class="brand-icon">🎙️</div>
+                <div>
+                    <div class="eyebrow">AgroSmart Nexus</div>
+                    <h1>Interface Vocale</h1>
+                    <p>Commande fluide, assistance intelligente et expérience immersive.</p>
+                </div>
+            </div>
+            <a class="ghost-link" href="/farmer-dashboard">← Retour</a>
+        </div>
+
+        <div class="toolbar">
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="french">🇫🇷 Français</button>
+                <button class="lang-btn" data-lang="bambara">🇲🇱 Bambara</button>
+                <button class="lang-btn" data-lang="peul">🇲🇱 Peul</button>
+                <button class="lang-btn" data-lang="soninke">🇲🇱 Soninké</button>
+            </div>
+            <div class="status-pill"><span class="dot"></span>Prêt à écouter</div>
+        </div>
+
+        <div class="note">Bambara reste géré via un fallback français pour une expérience plus stable dans le navigateur.</div>
+
+        <div class="action-buttons" style="margin-bottom: 16px;">
+            <button class="btn btn-secondary" id="sampleBambaraBtn">Essayer “Météo demain” en Bambara</button>
+            <button class="btn btn-secondary" id="sampleFrenchBtn">Essayer “Météo demain” en Français</button>
+        </div>
+
+        <div class="main-grid">
+            <section class="panel">
+                <div class="panel-title">Commande vocale</div>
+                <div class="voice-interface">
+                    <div class="status-text">
+                        <span class="status-indicator"></span>
+                        Système vocal actif
+                    </div>
+
+                    <div class="mic-shell">
+                        <button class="mic-button" id="micButton" title="Cliquez pour enregistrer">
+                            🎙️
+                        </button>
+                    </div>
+
+                    <div class="status-text">
+                        <span id="statusText">Cliquez sur le microphone pour commencer</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-title">Transcription</div>
+                <div class="transcription-box">
+                    <div class="transcription-label">Texte reconnu</div>
+                    <div class="transcription-text" id="transcription">En attente...</div>
+                </div>
+
+                <div class="manual-input-panel">
+                    <label class="transcription-label" for="manualTextInput">Commande texte</label>
+                    <textarea id="manualTextInput" placeholder="Exemple: météo demain, aide-moi à irriguer, quel conseil pour mon champ"></textarea>
+                    <button class="btn btn-secondary" id="manualSendBtn">Envoyer la commande</button>
+                </div>
+            </section>
+        </div>
+
+        <div class="response-box" id="responseBox" style="display: none;">
+            <div class="response-label">Réponse du système</div>
+            <div class="response-text" id="responseText"></div>
+            <button class="play-button" id="playButton">🔊 Écouter la réponse</button>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" id="clearBtn">Effacer</button>
+            <button class="btn btn-primary" id="submitBtn">Valider la commande</button>
+        </div>
+
+        <div class="command-history" id="historyContainer" style="display: none;">
+            <h3>📋 Historique des commandes</h3>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // Configuration
+        const API_BASE = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'http://127.0.0.1:8001';
+        const TOKEN_KEYS = ['accessToken', 'access_token'];
+
+        function getAccessToken() {
+            return TOKEN_KEYS.map(key => localStorage.getItem(key)).find(value => value);
+        }
+
+        function ensureVoiceAuth() {
+            const token = getAccessToken();
+            if (!token) {
+                showToast('Authentification requise. Redirection vers la page de connexion...', 'error');
+                setTimeout(() => {
+                    window.location.href = '/frontend/login.html';
+                }, 1800);
+                return false;
+            }
+            return true;
+        }
+
+        // État
+        let currentLanguage = 'french';
+        let isRecording = false;
+        let recognition = null;
+        let interimTranscript = '';
+        let finalTranscript = '';
+        let commandHistory = [];
+
+        // Éléments DOM
+        const micButton = document.getElementById('micButton');
+        const statusText = document.getElementById('statusText');
+        const transcriptionEl = document.getElementById('transcription');
+        const responseBox = document.getElementById('responseBox');
+        const responseText = document.getElementById('responseText');
+        const playButton = document.getElementById('playButton');
+        const manualTextInput = document.getElementById('manualTextInput');
+        const manualSendBtn = document.getElementById('manualSendBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const sampleBambaraBtn = document.getElementById('sampleBambaraBtn');
+        const sampleFrenchBtn = document.getElementById('sampleFrenchBtn');
+        const toastEl = document.getElementById('toast');
+        const historyContainer = document.getElementById('historyContainer');
+        const historyList = document.getElementById('historyList');
+        const langButtons = document.querySelectorAll('.lang-btn');
+
+        window.addEventListener('load', () => {
+            if (!getAccessToken()) {
+                showToast('Vous pouvez saisir une commande texte même sans connexion. La réponse complète nécessite une authentification.', 'info');
+            } else {
+                loadVoiceHistory();
+            }
+        });
+
+        // Initialiser Web Speech API
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                showToast('La reconnaissance vocale n\'est pas supportée par ce navigateur', 'error');
+                return;
+            }
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast('L’accès au microphone n\'est pas disponible dans ce navigateur', 'error');
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = getLanguageCode(currentLanguage);
+
+            recognition.onstart = () => {
+                isRecording = true;
+                micButton.classList.add('recording');
+                statusText.textContent = 'En écoute...';
+                interimTranscript = '';
+                transcriptionEl.textContent = 'En attente du texte...';
+            };
+
+            recognition.onresult = (event) => {
+                interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                const displayText = finalTranscript || interimTranscript;
+                transcriptionEl.textContent = displayText || 'En attente...';
+                transcriptionEl.classList.toggle('partial', !finalTranscript && interimTranscript);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Erreur reconnaissance vocale:', event.error);
+                if (event.error === 'not-allowed') {
+                    showToast('Accès au microphone refusé. Autorisez-le dans votre navigateur puis réessayez.', 'error');
+                } else if (event.error === 'audio-capture') {
+                    showToast('Le microphone est introuvable ou utilisé par une autre application.', 'error');
+                } else {
+                    showToast(`Erreur: ${event.error}`, 'error');
+                }
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                micButton.classList.remove('recording');
+                statusText.textContent = 'Reconnaissance terminée';
+            };
+        }
+
+        // Convertir code langue
+        function getLanguageCode(lang) {
+            const codes = {
+                french: 'fr-FR',
+                // Le navigateur Web Speech API ne supporte pas toujours le code Bambara.
+                // On utilise un fallback vers français pour démarrer la reconnaissance.
+                bambara: 'fr-FR',
+                peul: 'ff',
+                soninke: 'sn'
+            };
+            return codes[lang] || 'fr-FR';
+        }
+
+        // Événements Buttons Langue
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                langButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLanguage = btn.dataset.lang;
+                
+                if (recognition) {
+                    recognition.lang = getLanguageCode(currentLanguage);
+                }
+                
+                if (currentLanguage === 'bambara') {
+                    showToast('Bambara non pris en charge par le navigateur. Fallback français utilisé.', 'info');
+                } else {
+                    showToast(`Langue changée en ${btn.textContent.split(' ')[1]}`, 'info');
+                }
+            });
+        });
+
+        sampleBambaraBtn.addEventListener('click', () => {
+            currentLanguage = 'bambara';
+            langButtons.forEach(b => b.classList.toggle('active', b.dataset.lang === currentLanguage));
+            if (recognition) recognition.lang = getLanguageCode(currentLanguage);
+            finalTranscript = 'Météo demain';
+            transcriptionEl.textContent = finalTranscript;
+            submitBtn.click();
+        });
+
+        sampleFrenchBtn.addEventListener('click', () => {
+            currentLanguage = 'french';
+            langButtons.forEach(b => b.classList.toggle('active', b.dataset.lang === currentLanguage));
+            if (recognition) recognition.lang = getLanguageCode(currentLanguage);
+            finalTranscript = 'Météo demain';
+            transcriptionEl.textContent = finalTranscript;
+            submitBtn.click();
+        });
+
+        function sendManualCommand() {
+            const text = manualTextInput.value.trim();
+            if (!text) {
+                showToast('Saisissez une commande textuelle', 'warning');
+                return;
+            }
+
+            finalTranscript = text;
+            transcriptionEl.textContent = text;
+            responseBox.style.display = 'none';
+            submitBtn.click();
+        }
+
+        if (manualSendBtn) {
+            manualSendBtn.addEventListener('click', sendManualCommand);
+        }
+        if (manualTextInput) {
+            manualTextInput.addEventListener('keydown', (event) => {
+                if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                    event.preventDefault();
+                    sendManualCommand();
+                }
+            });
+        }
+
+        // Événement Microphone
+        micButton.addEventListener('click', async () => {
+            if (!recognition) {
+                initSpeechRecognition();
+            }
+
+            if (!recognition) {
+                return;
+            }
+
+            if (isRecording) {
+                recognition.stop();
+                return;
+            }
+
+            try {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                finalTranscript = '';
+                recognition.start();
+            } catch (error) {
+                console.error('Impossible d’accéder au microphone:', error);
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    statusText.textContent = 'Microphone refusé — vous pouvez saisir une commande ci-dessous';
+                    transcriptionEl.textContent = 'Microphone refusé. Saisissez votre commande ci-dessous.';
+                    manualTextInput.focus();
+                    showToast('Accès au microphone refusé. Vous pouvez saisir une commande textuelle.', 'error');
+                } else {
+                    showToast('Impossible d’utiliser le microphone.', 'error');
+                }
+            }
+        });
+
+        // Événement Effacer
+        clearBtn.addEventListener('click', () => {
+            finalTranscript = '';
+            interimTranscript = '';
+            transcriptionEl.textContent = 'En attente...';
+            responseBox.style.display = 'none';
+        });
+
+        // Événement Valider
+        submitBtn.addEventListener('click', async () => {
+            const commandText = finalTranscript.trim() || manualTextInput.value.trim();
+            if (!commandText) {
+                showToast('Veuillez prononcer une commande d\'abord ou saisir un texte', 'warning');
+                return;
+            }
+
+            finalTranscript = commandText;
+
+            try {
+                if (!ensureVoiceAuth()) return;
+
+                const token = getAccessToken();
+                if (!token) return;
+
+                const payload = {
+                    text: commandText,
+                    language: currentLanguage,
+                };
+
+                const response = await fetch(`${API_BASE}/api/voice/command/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error || 'Erreur API vocale');
+                }
+
+                const data = await response.json();
+                const result = data.result || {};
+                const voiceResponse = data.response || {};
+
+                const responseMessage = voiceResponse.text || 'Réponse reçue.';
+                responseText.textContent = responseMessage;
+                responseBox.style.display = 'block';
+
+                const historyItem = {
+                    text: result.text || finalTranscript,
+                    timestamp: new Date().toLocaleTimeString('fr-FR'),
+                    language: result.language || currentLanguage,
+                    response_text: responseMessage,
+                    intent: result.intent || 'unknown',
+                    confidence: result.confidence || 0.0,
+                };
+
+                addToHistory(historyItem);
+                await saveVoiceHistory(historyItem);
+                speakResponse(responseMessage, result.language || currentLanguage);
+                showToast('Commande traitée avec succès', 'success');
+            } catch (error) {
+                console.error('Erreur:', error);
+                showToast('Erreur lors du traitement', 'error');
+            }
+        });
+
+        function speakResponse(text, lang) {
+            try {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = getLanguageCode(lang);
+                window.speechSynthesis.speak(utterance);
+            } catch (error) {
+                console.error('Erreur synthèse vocale:', error);
+            }
+        }
+
+        // Événement Play Réponse
+        playButton.addEventListener('click', async () => {
+            try {
+                if (!ensureVoiceAuth()) return;
+
+                // Synthèse vocale
+                const utterance = new SpeechSynthesisUtterance(responseText.textContent);
+                utterance.lang = getLanguageCode(currentLanguage);
+                window.speechSynthesis.speak(utterance);
+
+                showToast('Lecture en cours...', 'info');
+            } catch (error) {
+                console.error('Erreur synthèse vocale:', error);
+                showToast('Erreur synthèse vocale', 'error');
+            }
+        });
+
+        // Ajouter à l'historique
+        function addToHistory(item) {
+            if (typeof item === 'string') {
+                item = {
+                    text: item,
+                    timestamp: new Date().toLocaleTimeString('fr-FR'),
+                    language: currentLanguage,
+                };
+            }
+
+            commandHistory.unshift(item);
+            
+            if (commandHistory.length > 20) {
+                commandHistory.pop();
+            }
+
+            updateHistoryDisplay();
+        }
+
+        async function saveVoiceHistory(item) {
+            try {
+                const token = getAccessToken();
+                if (!token) return;
+
+                await fetch(`${API_BASE}/api/voice/history/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        success: true,
+                        recognized_text: item.text,
+                        intent: item.intent || 'query',
+                        confidence: item.confidence || 0.0,
+                        language_detected: item.language,
+                        response_text: item.response_text || '',
+                    }),
+                });
+            } catch (error) {
+                console.error('Erreur sauvegarde historique vocal:', error);
+            }
+        }
+
+        async function loadVoiceHistory() {
+            try {
+                const token = getAccessToken();
+                if (!token) return;
+
+                const response = await fetch(`${API_BASE}/api/voice/history/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+                if (data.items && Array.isArray(data.items)) {
+                    commandHistory = data.items.map(item => ({
+                        text: item.recognized_text,
+                        timestamp: new Date(item.timestamp).toLocaleTimeString('fr-FR'),
+                        language: item.language_detected || item.language,
+                        response_text: item.response_text,
+                        intent: item.intent,
+                        confidence: item.confidence,
+                    }));
+                    updateHistoryDisplay();
+                }
+            } catch (error) {
+                console.error('Erreur chargement historique vocal:', error);
+            }
+        }
+
+        // Mettre à jour l'affichage historique
+        function updateHistoryDisplay() {
+            if (commandHistory.length === 0) {
+                historyContainer.style.display = 'none';
+                return;
+            }
+
+            historyContainer.style.display = 'block';
+            historyList.innerHTML = commandHistory.map(item => `
+                <div class="history-item">
+                    <div class="history-time">${item.timestamp}</div>
+                    <div class="history-text">${item.text}</div>
+                </div>
+            `).join('');
+        }
+
+        // Notification Toast
+        function showToast(message, type = 'info') {
+            toastEl.textContent = message;
+            toastEl.className = `toast ${type}`;
+            
+            setTimeout(() => {
+                toastEl.className = 'toast';
+            }, 3000);
+        }
+
+        // Initialisation au chargement
+        window.addEventListener('load', async () => {
+            initSpeechRecognition();
+            await loadVoiceHistory();
+            showToast('Interface vocale prête', 'success');
+        });
+
+        // Vérifier authentification
+        window.addEventListener('beforeunload', () => {
+            if (isRecording && recognition) {
+                recognition.stop();
+            }
+        });
+    </script>
+</body>
+</html>

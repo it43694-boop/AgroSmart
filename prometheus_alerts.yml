@@ -1,0 +1,40 @@
+groups:
+  - name: agro-api-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          increase(http_requests_total{status=~"5.."}[5m]) / increase(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP error rate detected for AgroSmart"
+          description: "More than 5% of requests failed in the last 5 minutes."
+
+      - alert: HighRequestLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High request latency for AgroSmart"
+          description: "95th percentile request latency is above 1 second over the last 5 minutes."
+
+      - alert: AppUnavailable
+        expr: up{job="agro-api-prod"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "AgroSmart application is down"
+          description: "The AgroSmart application is not reachable by Prometheus."
+
+      - alert: DatabaseUnavailable
+        expr: up{job="postgres-prod"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Production PostgreSQL is down"
+          description: "The production PostgreSQL database is not reachable by Prometheus."

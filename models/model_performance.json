@@ -1,0 +1,10 @@
+{
+  "yield_prediction": {
+    "r2_score": 0.817,
+    "mae": 176.555
+  },
+  "price_prediction": {
+    "r2_score": 0.995,
+    "mae": 6.822
+  }
+}

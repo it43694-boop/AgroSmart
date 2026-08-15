@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-05-08T17:59:15.883176",
+  "results": {
+    "weather_lstm": false,
+    "crop_recommendation": false
+  }
+}

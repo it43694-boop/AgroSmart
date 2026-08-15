@@ -1,0 +1,9 @@
+{
+  "training_date": "2026-05-08T17:59:15.879657",
+  "has_tensorflow": false,
+  "models_trained": [],
+  "data_samples": {
+    "weather": 1000,
+    "crops": 1000
+  }
+}
