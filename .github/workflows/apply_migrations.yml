@@ -23,7 +23,11 @@ jobs:
           DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
         run: |
           pip install alembic
-          # strip surrounding single or double quotes that may have been added accidentally
-          DATABASE_URL=$(echo "$DATABASE_URL" | sed -e "s/^'//" -e "s/'$//" -e 's/^"//' -e 's/"$//')
+          # strip surrounding single or double quotes using bash parameter expansion
+          DATABASE_URL="${DATABASE_URL%\"}"
+          DATABASE_URL="${DATABASE_URL#\"}"
+          DATABASE_URL="${DATABASE_URL%\'}"
+          DATABASE_URL="${DATABASE_URL#\'}"
           export DATABASE_URL
+          echo "DATABASE_URL length=${#DATABASE_URL}"
           alembic upgrade head
