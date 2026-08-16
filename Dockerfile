@@ -50,6 +50,9 @@ ENV PATH="/home/agro/.local/bin:$PATH"
 # Copier le code de l'application
 COPY --chown=agro:agro . .
 
+# Rendre le script de démarrage exécutable
+RUN chmod +x ./start.sh || true
+
 # Variables d'environnement pour la production
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -66,6 +69,8 @@ VOLUME ["/app/data", "/app/logs"]
 EXPOSE 8000
 
 # Changer vers l'utilisateur non-root
+
+# Changer vers l'utilisateur non-root
 USER agro
 
 # Health check
@@ -73,4 +78,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/ || exit 1
 
 # Commande de démarrage optimisée pour la production
-CMD sh -c "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1 --loop uvloop --http httptools --access-log --log-level info"
+CMD ["./start.sh"]
