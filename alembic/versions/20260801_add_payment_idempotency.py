@@ -1,7 +1,7 @@
 """add payment_idempotency table
 
 Revision ID: 20260801_add_payment_idempotency
-Revises: b248e9ab10c1
+Revises: 2f0cfc9fca85
 Create Date: 2026-08-01 00:00:00.000000
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '20260801_add_payment_idempotency'
-down_revision = 'b248e9ab10c1'
+down_revision = '2f0cfc9fca85'
 branch_labels = None
 depends_on = None
 
