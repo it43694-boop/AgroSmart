@@ -5,18 +5,36 @@ from sqlalchemy.orm import Session
 from database import get_db
 import models
 import auth
-from services.ml_service import AdvancedMLService
 
 router = APIRouter(prefix="/api/ml", tags=["ml"])
 
-# Initialize advanced ML service once when router is imported.
-try:
-    advanced_ml_service = AdvancedMLService()
-    ML_SERVICE_AVAILABLE = True
-except Exception as exc:
-    advanced_ml_service = None
-    ML_SERVICE_AVAILABLE = False
-    print(f"ML service unavailable: {exc}")
+# Lazy singleton: the heavy ML service (imports tensorflow, etc.) is only
+# instantiated on first actual use, not at module import / app startup time.
+# This avoids blocking the server's port binding on low-CPU instances.
+_advanced_ml_service = None
+_ml_service_load_attempted = False
+_ml_service_load_error = None
+
+
+def _get_ml_service():
+    """Return the AdvancedMLService singleton, loading it lazily on first call."""
+    global _advanced_ml_service, _ml_service_load_attempted, _ml_service_load_error
+
+    if not _ml_service_load_attempted:
+        _ml_service_load_attempted = True
+        try:
+            from services.ml_service import AdvancedMLService
+            _advanced_ml_service = AdvancedMLService()
+        except Exception as exc:
+            _advanced_ml_service = None
+            _ml_service_load_error = str(exc)
+            print(f"ML service unavailable: {exc}")
+
+    return _advanced_ml_service
+
+
+def _ml_service_available() -> bool:
+    return _get_ml_service() is not None
 
 
 @router.post("/predict-yield")
@@ -26,7 +44,8 @@ def predict_yield(
     current_user: models.User = Depends(auth.get_current_user),
 ):
     """Prédire le rendement des cultures avec intervalle de confiance"""
-    if not ML_SERVICE_AVAILABLE:
+    advanced_ml_service = _get_ml_service()
+    if not advanced_ml_service:
         raise HTTPException(status_code=503, detail="Service ML non disponible")
 
     try:
@@ -65,7 +84,8 @@ def predict_price(
     current_user: models.User = Depends(auth.get_current_user),
 ):
     """Prédire le prix des cultures pour les 7 prochains jours"""
-    if not ML_SERVICE_AVAILABLE:
+    advanced_ml_service = _get_ml_service()
+    if not advanced_ml_service:
         raise HTTPException(status_code=503, detail="Service ML non disponible")
 
     try:
@@ -91,7 +111,8 @@ def assess_weather_risks(
     current_user: models.User = Depends(auth.get_current_user),
 ):
     """Évaluer les risques météorologiques pour les cultures"""
-    if not ML_SERVICE_AVAILABLE:
+    advanced_ml_service = _get_ml_service()
+    if not advanced_ml_service:
         raise HTTPException(status_code=503, detail="Service ML non disponible")
 
     try:
@@ -120,7 +141,8 @@ def get_recommendations(
     current_user: models.User = Depends(auth.get_current_user),
 ):
     """Générer des recommandations agronomiques"""
-    if not ML_SERVICE_AVAILABLE:
+    advanced_ml_service = _get_ml_service()
+    if not advanced_ml_service:
         raise HTTPException(status_code=503, detail="Service ML non disponible")
 
     try:
@@ -167,6 +189,8 @@ def model_status(
     """Expose the current active model version and basic drift metrics."""
     if current_user.effective_role != "admin":
         raise HTTPException(status_code=403, detail="Accès restreint aux administrateurs")
+
+    advanced_ml_service = _get_ml_service()
     return {
         "active_model_versions": {
             "yield": advanced_ml_service.model_versions.get("yield") if advanced_ml_service else None,
@@ -187,6 +211,7 @@ def retrain_models(
     if current_user.effective_role != "admin":
         raise HTTPException(status_code=403, detail="Accès restreint aux administrateurs")
 
+    advanced_ml_service = _get_ml_service()
     if not advanced_ml_service:
         raise HTTPException(status_code=503, detail="Service ML non disponible")
 
