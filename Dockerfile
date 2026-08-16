@@ -55,12 +55,14 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
     ENVIRONMENT=production \
-    DATABASE_URL=sqlite:///data/agro_smart.db
+    DATABASE_URL=sqlite:///data/agro_smart.db \
+    PORT=8000
 
 # Créer le volume pour la persistance des données
 VOLUME ["/app/data", "/app/logs"]
 
 # Exposer le port
+# Expose a default port (Render will provide the actual $PORT at runtime)
 EXPOSE 8000
 
 # Changer vers l'utilisateur non-root
@@ -68,14 +70,7 @@ USER agro
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/ || exit 1
+    CMD curl -f http://localhost:${PORT:-8000}/ || exit 1
 
 # Commande de démarrage optimisée pour la production
-CMD ["uvicorn", "main:app", \
-     "--host", "0.0.0.0", \
-     "--port", "8000", \
-     "--workers", "1", \
-     "--loop", "uvloop", \
-     "--http", "httptools", \
-     "--access-log", \
-     "--log-level", "info"]
+CMD sh -c "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1 --loop uvloop --http httptools --access-log --log-level info"
