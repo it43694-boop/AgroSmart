@@ -1,4 +1,4 @@
-const apiBase = (window.location.origin || '') + '/api';
+const apiBase = 'https://agrosmart-vi8d.onrender.com/api';
 
 function formatError(detail) {
   if (!detail) return 'Erreur inconnue';

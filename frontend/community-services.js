@@ -1,4 +1,4 @@
-const apiBase = window.location.origin || '';
+const apiBase = 'https://agrosmart-vi8d.onrender.com';
 const accessTokenKey = 'accessToken';
 
 function getToken() {

@@ -1,4 +1,4 @@
-ï»¿const apiBase = (window.location.origin || '') + '/api';
+const apiBase = 'https://agrosmart-vi8d.onrender.com/api';
 let accessToken = localStorage.getItem('accessToken') || null;
 const OFFLINE_QUEUE_KEY = 'agrosmartOfflineQueue';
 const TOKEN_KEY = 'accessToken';
@@ -13,18 +13,18 @@ async function registerServiceWorker() {
     try {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(reg => reg.unregister()));
-      console.log('Service worker dÃ©senregistrÃ© en local pour Ã©viter le cache obsolÃ¨te.');
+      console.log('Service worker désenregistré en local pour éviter le cache obsolète.');
     } catch (error) {
-      console.warn('Impossible de dÃ©senregistrer le service worker en local:', error);
+      console.warn('Impossible de désenregistrer le service worker en local:', error);
     }
     return;
   }
 
   try {
     const registration = await navigator.serviceWorker.register('/service-worker.js');
-    console.log('Service worker AgroSmart enregistrÃ© Ã ', registration.scope);
+    console.log('Service worker AgroSmart enregistré à', registration.scope);
   } catch (error) {
-    console.warn('Enregistrement du service worker Ã©chouÃ©:', error);
+    console.warn('Enregistrement du service worker échoué:', error);
   }
 }
 
@@ -47,7 +47,7 @@ async function queueOfflineRequest(url, data, auth = false) {
   return {
     queued: true,
     offline: true,
-    message: 'RequÃªte mise en file d\'attente et envoyÃ©e Ã  la reconnexion.'
+    message: 'Requête mise en file d\'attente et envoyée à la reconnexion.'
   };
 }
 
@@ -68,14 +68,14 @@ async function flushOfflineQueue() {
 }
 
 window.addEventListener('online', () => {
-  console.log('Connexion rÃ©tablie, synchronisation des requÃªtes hors ligne.');
+  console.log('Connexion rétablie, synchronisation des requêtes hors ligne.');
   flushOfflineQueue();
   updateNetworkBanner();
   updateQueueIndicator();
 });
 
 window.addEventListener('offline', () => {
-  console.log('Mode hors ligne activÃ©.');
+  console.log('Mode hors ligne activé.');
   updateNetworkBanner();
   updateQueueIndicator();
 });
@@ -117,7 +117,7 @@ async function postJson(url, data, auth = false) {
       localStorage.removeItem(TOKEN_KEY);
       accessToken = null;
       window.location.href = '/login';
-      throw new Error('Session expirÃ©e');
+      throw new Error('Session expirée');
     }
 
     if (!response.ok) {
@@ -128,7 +128,7 @@ async function postJson(url, data, auth = false) {
   } catch (error) {
     clearTimeout(timeoutId);
     if (error.name === 'AbortError') {
-      throw new Error('DÃ©lai de requÃªte dÃ©passÃ©');
+      throw new Error('Délai de requête dépassé');
     }
     throw error;
   }
@@ -148,7 +148,7 @@ async function fetchJson(url, auth = false) {
         const cachedJson = await cachedResponse.json();
         return cachedJson;
       }
-      throw new Error('Hors ligne et donnÃ©es non disponibles dans le cache.');
+      throw new Error('Hors ligne et données non disponibles dans le cache.');
     } catch (error) {
       console.error('Cache Error:', error);
       throw error;
@@ -187,7 +187,7 @@ function showResult(elementId, data, isError = false) {
     </div>`;
   } else {
     element.innerHTML = `<div style="color: green; padding: 10px; border: 1px solid green; border-radius: 4px; background: #e6ffe6;">
-      <strong>SuccÃ¨s:</strong><br><pre>${JSON.stringify(data, null, 2)}</pre>
+      <strong>Succès:</strong><br><pre>${JSON.stringify(data, null, 2)}</pre>
     </div>`;
   }
 }
@@ -226,8 +226,8 @@ function updateNetworkBanner() {
   const online = navigator.onLine;
   const lowBandwidth = getLowBandwidthMode();
   banner.textContent = online
-    ? `En ligne${lowBandwidth ? ' - mode basse bande passante activÃ©' : ''}`
-    : 'Hors ligne - utilisation en mode PWA activÃ©e';
+    ? `En ligne${lowBandwidth ? ' - mode basse bande passante activé' : ''}`
+    : 'Hors ligne - utilisation en mode PWA activée';
   banner.className = online ? 'network-banner online' : 'network-banner offline';
 }
 
@@ -235,7 +235,7 @@ function updateQueueIndicator() {
   const queueElement = document.getElementById('offline-queue-status');
   if (!queueElement) return;
   const queue = getOfflineQueue();
-  queueElement.textContent = queue.length > 0 ? `RequÃªtes hors ligne en attente : ${queue.length}` : 'Aucune requÃªte en attente.';
+  queueElement.textContent = queue.length > 0 ? `Requêtes hors ligne en attente : ${queue.length}` : 'Aucune requête en attente.';
 }
 
 function formatCurrency(value) {
@@ -252,7 +252,7 @@ function renderDashboard(data) {
 
   if (data.detail) {
     container.classList.add('hidden');
-    error.textContent = data.detail || 'Erreur lors de la rÃ©cupÃ©ration du dashboard.';
+    error.textContent = data.detail || 'Erreur lors de la récupération du dashboard.';
     error.classList.remove('hidden');
     return;
   }
@@ -262,9 +262,9 @@ function renderDashboard(data) {
       <h3>Profil agriculteur</h3>
       <p><strong>Nom :</strong> ${data.user.full_name}</p>
       <p><strong>Email :</strong> ${data.user.email}</p>
-      <p><strong>RÃ©gion :</strong> ${data.user.region || 'Non dÃ©finie'}</p>
+      <p><strong>Région :</strong> ${data.user.region || 'Non définie'}</p>
       <p><strong>Surface totale :</strong> ${data.user.total_surface} ha</p>
-      <p><strong>Validation :</strong> ${data.user.is_validated ? 'ValidÃ©' : 'En attente'}</p>
+      <p><strong>Validation :</strong> ${data.user.is_validated ? 'Validé' : 'En attente'}</p>
     </div>
   `;
 
@@ -272,7 +272,7 @@ function renderDashboard(data) {
     <div class="card">
       <h3>Finance</h3>
       <p class="metric"><span>Revenu total</span><strong>${formatCurrency(data.total_revenue)}</strong></p>
-      <p class="metric"><span>CoÃ»t total</span><strong>${formatCurrency(data.total_cost)}</strong></p>
+      <p class="metric"><span>Coût total</span><strong>${formatCurrency(data.total_cost)}</strong></p>
       <p class="metric"><span>Revenu net</span><strong>${formatCurrency(data.net_income)}</strong></p>
       <p><strong>Historique :</strong> ${data.user.finance_records.length} enregistrements</p>
     </div>
@@ -280,10 +280,10 @@ function renderDashboard(data) {
 
   const weatherCard = `
     <div class="card accent-card">
-      <h3>MÃ©tÃ©o</h3>
+      <h3>Météo</h3>
       <p><strong>Localisation :</strong> ${data.weather.location}</p>
-      <p><strong>TempÃ©rature :</strong> ${data.weather.temperature_celsius} Â°C</p>
-      <p><strong>PrÃ©visions :</strong></p>
+      <p><strong>Température :</strong> ${data.weather.temperature_celsius} °C</p>
+      <p><strong>Prévisions :</strong></p>
       <ul>${data.weather.forecast.map(item => `<li>${item}</li>`).join('')}</ul>
       ${data.weather.alert ? `<p class="alert">${data.weather.alert}</p>` : ''}
     </div>
@@ -299,7 +299,7 @@ function renderDashboard(data) {
 
   const creditCard = `
     <div class="card accent-card">
-      <h3>Score de crÃ©dit</h3>
+      <h3>Score de crédit</h3>
       <p class="large-value">${data.credit_score.score}</p>
       <p><strong>Evaluation :</strong> ${data.credit_score.rating}</p>
       <ul>${data.credit_score.details.map(item => `<li>${item}</li>`).join('')}</ul>
@@ -308,7 +308,7 @@ function renderDashboard(data) {
 
   const marketCard = `
     <div class="card">
-      <h3>MarchÃ©</h3>
+      <h3>Marché</h3>
       <p><strong>Tendance :</strong> ${data.market_info.market_trend}</p>
       <p><strong>Source :</strong> ${data.market_info.source}</p>
       <ul>${Object.entries(data.market_info.crop_prices)
@@ -321,7 +321,7 @@ function renderDashboard(data) {
     <div class="card">
       <h3>Satellite</h3>
       <p>${data.satellite_info.summary}</p>
-      <p><strong>Indice vÃ©gÃ©tation :</strong> ${data.satellite_info.vegetation_index}</p>
+      <p><strong>Indice végétation :</strong> ${data.satellite_info.vegetation_index}</p>
       <p>${data.satellite_info.advisor_note}</p>
       ${data.satellite_info.image_url ? `
         <picture>
@@ -344,10 +344,10 @@ function renderDashboard(data) {
 }
 
 // ==========================================
-// Ã‰COUTEURS D'Ã‰VÃ‰NEMENTS AVEC VÃ‰RIFICATIONS DE SÃ‰CURITÃ‰
+// ÉCOUTEURS D'ÉVÉNEMENTS AVEC VÉRIFICATIONS DE SÉCURITÉ
 // ==========================================
 
-// VÃ©rifier que les Ã©lÃ©ments existent avant d'ajouter les event listeners
+// Vérifier que les éléments existent avant d'ajouter les event listeners
 if (document.getElementById('login-form')) {
   document.getElementById('login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -364,7 +364,7 @@ if (document.getElementById('login-form')) {
       if (data.access_token) {
         accessToken = data.access_token;
         localStorage.setItem('accessToken', data.access_token);
-        showResult('login-result', { message: 'Connexion rÃ©ussie ! Token obtenu.', token: data.access_token.substring(0, 20) + '...' });
+        showResult('login-result', { message: 'Connexion réussie ! Token obtenu.', token: data.access_token.substring(0, 20) + '...' });
       } else {
         showResult('login-result', data, true);
       }
@@ -383,7 +383,7 @@ if (document.getElementById('create-user-form')) {
         full_name: fullName || 'Test User',
         email: document.getElementById('user-email').value,
         password: document.getElementById('user-password').value,
-        phone: '+22501020304', // NumÃ©ro par dÃ©faut pour les tests
+        phone: '+22501020304', // Numéro par défaut pour les tests
         region: document.getElementById('user-region').value || 'Test Region',
         total_surface: 1.0, // Surface minimale requise
         account_type: 'farmer',
@@ -463,7 +463,7 @@ if (document.getElementById('dashboard-form')) {
           }
         }
       } catch (e) {
-        console.warn('Impossible de rÃ©cupÃ©rer la localisation utilisateur:', e);
+        console.warn('Impossible de récupérer la localisation utilisateur:', e);
       }
 
       const data = await fetchJson(`${apiBase}/dashboard/${userId}?lat=${lat}&lon=${lon}`, true);
