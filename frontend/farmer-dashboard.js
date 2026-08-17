@@ -1,4 +1,4 @@
-// farmer-dashboard.js - Logique pour le nouveau dashboard agriculteur
+﻿// farmer-dashboard.js - Logique pour le nouveau dashboard agriculteur
 
 /**
  * Conversion sûre des valeurs numériques
@@ -143,7 +143,7 @@ async function loadMarketPrices(days = 30) {
         // try to read first field coordinates (preferred)
         try {
             if (token) {
-                const fieldsResp = await fetch('/api/virtualfarm/fields', {
+                const fieldsResp = await fetch('https://agrosmart-vi8d.onrender.com/api/virtualfarm/fields', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (fieldsResp.ok) {
@@ -157,7 +157,7 @@ async function loadMarketPrices(days = 30) {
                     }
                 } else {
                     // fallback: try /me for possible coordinates
-                    const mresp = await fetch('/api/me', { headers: { 'Authorization': `Bearer ${token}` } });
+                    const mresp = await fetch('https://agrosmart-vi8d.onrender.com/api/me', { headers: { 'Authorization': `Bearer ${token}` } });
                     if (mresp.ok) {
                         const me = await mresp.json().catch(()=>null);
                         if (me && typeof me.latitude === 'number' && typeof me.longitude === 'number') {
@@ -170,7 +170,7 @@ async function loadMarketPrices(days = 30) {
             console.warn('Impossible de récupérer la localisation utilisateur:', e);
         }
 
-        const resp = await fetch(`/api/markets/?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`);
+        const resp = await fetch(`https://agrosmart-vi8d.onrender.com/api/markets/?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`);
 
         if (!resp.ok) {
             console.warn("Impossible de récupérer les prix marché:", resp.status);
@@ -385,7 +385,7 @@ async function loadUserCropSummary() {
             return;
         }
 
-        const response = await fetch(`/api/users/${currentUser.id}/crops/`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/users/${currentUser.id}/crops/`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -415,7 +415,7 @@ async function loadFieldSummary() {
     const token = localStorage.getItem('accessToken');
     if (!token) return;
     try {
-        const response = await fetch('/api/virtualfarm/fields', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/virtualfarm/fields', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -535,7 +535,7 @@ async function editField(fieldId) {
     }
 
     try {
-        const response = await fetch(`/api/virtualfarm/field?field_id=${fieldId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/virtualfarm/field?field_id=${fieldId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -591,7 +591,7 @@ async function deleteField(fieldId) {
     }
 
     try {
-        const response = await fetch(`/api/virtualfarm/field/${fieldId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/virtualfarm/field/${fieldId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -640,7 +640,7 @@ async function loadAgroBrainRecommendation() {
         let lat = 12.6392;
         let lon = -8.0029;
         try {
-            const fieldResp = await fetch('/api/virtualfarm/field', { headers });
+            const fieldResp = await fetch('https://agrosmart-vi8d.onrender.com/api/virtualfarm/field', { headers });
             if (fieldResp.ok) {
                 const field = await fieldResp.json();
                 if (field && typeof field.latitude === 'number' && typeof field.longitude === 'number') {
@@ -652,7 +652,7 @@ async function loadAgroBrainRecommendation() {
             console.warn('Impossible de récupérer la localisation pour l’assistant:', fieldError);
         }
 
-        const response = await fetch(`/api/assistant/summary?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`, { headers });
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/assistant/summary?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`, { headers });
         if (!response.ok) {
             throw new Error(`Échec assistant AgroSmart: ${response.status}`);
         }
@@ -795,7 +795,7 @@ async function checkAuth() {
             return false;
         }
 
-        const response = await fetch('/api/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/me', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -1042,7 +1042,7 @@ async function saveProfile() {
     };
 
     try {
-        const response = await fetch(`/api/users/${currentUser.id}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/users/${currentUser.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -1096,7 +1096,7 @@ async function changePassword() {
             return;
         }
         
-        const response = await fetch('/api/change-password', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/change-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1140,7 +1140,7 @@ async function requestCredit() {
             return;
         }
         
-        const response = await fetch(`/api/users/${currentUser.id}/loans`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/users/${currentUser.id}/loans`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1186,7 +1186,7 @@ async function subscribeInsurance() {
             return;
         }
         
-        const response = await fetch(`/api/users/${currentUser.id}/insurances`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/users/${currentUser.id}/insurances`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1527,7 +1527,7 @@ async function loadAdvisorData() {
         if (!token || !currentUser) return;
         
         const lat = 12.6392, lon = -8.0029;
-        const response = await fetch(`/api/advisor/${currentUser.id}?lat=${lat}&lon=${lon}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/advisor/${currentUser.id}?lat=${lat}&lon=${lon}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -1566,7 +1566,7 @@ async function loadFinancialData() {
         const token = localStorage.getItem('accessToken');
         if (!token || !currentUser) return;
         
-        const response = await fetch(`/api/dashboard/${currentUser.id}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/dashboard/${currentUser.id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -1604,7 +1604,7 @@ async function loadAlertsData() {
         const token = localStorage.getItem('accessToken');
         if (!token || !currentUser) return;
         
-        const response = await fetch(`/api/dashboard/${currentUser.id}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/dashboard/${currentUser.id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -1660,7 +1660,7 @@ async function loadStatisticsData() {
         const token = localStorage.getItem('accessToken');
         if (!token || !currentUser) return;
         
-        const response = await fetch(`/api/dashboard/${currentUser.id}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/dashboard/${currentUser.id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -1829,7 +1829,7 @@ async function loadSettingsData() {
         const token = localStorage.getItem('accessToken');
         if (!token || !currentUser) return;
         
-        const response = await fetch('/api/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/me', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -1878,7 +1878,7 @@ async function saveProfile() {
             surface_ha: parseFloat(document.getElementById('profile-surface-input').value)
         };
         
-        const response = await fetch('/api/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/me', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1910,7 +1910,7 @@ function refreshWeather() {
         // try to read first field coordinates (preferred)
         try {
             if (token) {
-                const fieldsResp = await fetch('/api/virtualfarm/fields', {
+                const fieldsResp = await fetch('https://agrosmart-vi8d.onrender.com/api/virtualfarm/fields', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (fieldsResp.ok) {
@@ -1924,7 +1924,7 @@ function refreshWeather() {
                     }
                 } else {
                     // fallback: try /me for possible coordinates
-                    const mresp = await fetch('/api/me', { headers: { 'Authorization': `Bearer ${token}` } });
+                    const mresp = await fetch('https://agrosmart-vi8d.onrender.com/api/me', { headers: { 'Authorization': `Bearer ${token}` } });
                     if (mresp.ok) {
                         const me = await mresp.json().catch(()=>null);
                         if (me && typeof me.latitude === 'number' && typeof me.longitude === 'number') {
@@ -1938,7 +1938,7 @@ function refreshWeather() {
         }
 
         try {
-            const resp = await fetch(`/api/weather/?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&_=${Date.now()}`);
+            const resp = await fetch(`https://agrosmart-vi8d.onrender.com/api/weather/?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&_=${Date.now()}`);
             if (!resp.ok) {
                 showAlert('Erreur récupération météo');
                 return;
@@ -2137,7 +2137,7 @@ function initCharts() {
 async function loadCrops() {
     try {
         if (!currentUser) return;
-        const response = await fetch(`/api/users/${currentUser.id}/crops/`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/users/${currentUser.id}/crops/`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -2194,7 +2194,7 @@ async function loadFarmerCalendar() {
             return;
         }
 
-        const response = await fetch('/api/farmer/calendar/', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/farmer/calendar/', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -2275,7 +2275,7 @@ function showCalendarError(message) {
 
 async function loadListings() {
     try {
-        const response = await fetch('/api/marketplace/listings', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/marketplace/listings', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -2292,7 +2292,7 @@ async function loadListings() {
 
 async function loadSellerListings() {
     try {
-        const response = await fetch('/api/marketplace/seller/listings', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/marketplace/seller/listings', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -2375,7 +2375,7 @@ function displayListings(listings) {
 
 async function viewProductDetails(listingId) {
     try {
-        const response = await fetch(`/api/marketplace/listings/${listingId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/listings/${listingId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -2603,7 +2603,7 @@ async function sendMessageToSeller(event) {
     };
 
     try {
-        const response = await fetch(`/api/marketplace/sellers/${currentSellerId}/contact`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/sellers/${currentSellerId}/contact`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -2628,7 +2628,7 @@ async function sendMessageToSeller(event) {
 
 async function loadSellerProfile(sellerId) {
     try {
-        const response = await fetch(`/api/marketplace/sellers/${sellerId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/sellers/${sellerId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -2726,7 +2726,7 @@ function displayOrders(orders) {
 async function loadLoans() {
     try {
         if (!currentUser) return;
-        const response = await fetch(`/api/users/${currentUser.id}/loans`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/users/${currentUser.id}/loans`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -2783,7 +2783,7 @@ function displayLoans(loans) {
 async function loadInsurances() {
     try {
         if (!currentUser) return;
-        const response = await fetch(`/api/users/${currentUser.id}/insurances`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/users/${currentUser.id}/insurances`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -2829,7 +2829,7 @@ async function handleCropSubmit(e) {
 
     try {
         if (!currentUser) return;
-        const response = await fetch(`/api/users/${currentUser.id}/crops/`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/users/${currentUser.id}/crops/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -2934,7 +2934,7 @@ async function handleListingSubmit(e) {
     });
 
     try {
-        const response = await fetch('/api/marketplace/listings', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/marketplace/listings', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -3047,7 +3047,7 @@ async function editListing(listingId) {
     if (!listingId) return;
 
     try {
-        const response = await fetch(`/api/marketplace/listings/${listingId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/listings/${listingId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -3099,7 +3099,7 @@ async function submitListingEdit(event) {
     }
 
     try {
-        const response = await fetch(`/api/marketplace/listings/${editingListingId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/listings/${editingListingId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -3130,7 +3130,7 @@ async function deactivateListing(listingId) {
     }
     
     try {
-        const response = await fetch(`/api/marketplace/listings/${listingId}/deactivate`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/listings/${listingId}/deactivate`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -3158,7 +3158,7 @@ async function activateListing(listingId) {
     }
     
     try {
-        const response = await fetch(`/api/marketplace/listings/${listingId}/activate`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/listings/${listingId}/activate`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -3186,7 +3186,7 @@ async function deleteListing(listingId) {
     }
     
     try {
-        const response = await fetch(`/api/marketplace/listings/${listingId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/listings/${listingId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -3212,7 +3212,7 @@ async function deleteListing(listingId) {
 
 async function refreshBlockchainStatus() {
     try {
-        const response = await fetch('/api/blockchain/status/');
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/blockchain/status/');
         const data = await response.json();
 
         document.getElementById('blockchain-status').textContent = data.status === 'connected' ? 'Connecté ✅' : 'Déconnecté ❌';
@@ -3253,7 +3253,7 @@ async function createBlockchainTrace() {
     };
 
     try {
-        const response = await fetch('/api/blockchain/trace/', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/blockchain/trace/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -3294,7 +3294,7 @@ async function loadBlockchainTraces() {
         const tracesList = document.getElementById('traces-list');
         if (!tracesList) return;
         
-        const response = await fetch('/api/blockchain/traces', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/blockchain/traces', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -3395,7 +3395,7 @@ async function createBlockchainTrace() {
             return;
         }
         
-        const response = await fetch('/api/blockchain/traces', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/blockchain/traces', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -3433,7 +3433,7 @@ async function verifyBlockchainTrace() {
         }
         
         const token = localStorage.getItem('accessToken');
-        const response = await fetch(`/api/blockchain/traces/${traceId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/blockchain/traces/${traceId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -3471,7 +3471,7 @@ async function verifyBlockchainTrace() {
 
 async function syncOfflineData() {
     try {
-        const response = await fetch('/api/offline/sync/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/offline/sync/me', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -3493,7 +3493,7 @@ async function syncOfflineData() {
 
 async function loadSellerBalance() {
     try {
-        const response = await fetch('/api/payment-release/seller-balance', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/payment-release/seller-balance', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -3559,7 +3559,7 @@ async function loadFieldList() {
     container.innerHTML = '';
     if (!token) return;
     try {
-        const resp = await fetch('/api/virtualfarm/fields', { headers: { 'Authorization': `Bearer ${token}` } });
+        const resp = await fetch('https://agrosmart-vi8d.onrender.com/api/virtualfarm/fields', { headers: { 'Authorization': `Bearer ${token}` } });
         if (!resp.ok) return;
         const fields = await resp.json();
         if (!Array.isArray(fields) || fields.length === 0) {

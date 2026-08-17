@@ -85,7 +85,7 @@
     async sendSubscriptionToServer(subscription) {
         try {
             const token = localStorage.getItem('accessToken');
-            const response = await fetch('/api/notifications/subscribe', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/notifications/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,7 +109,7 @@
     async removeSubscriptionFromServer() {
         try {
             const token = localStorage.getItem('accessToken');
-            await fetch('/api/notifications/unsubscribe', {
+            await fetch('https://agrosmart-vi8d.onrender.com/api/notifications/unsubscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

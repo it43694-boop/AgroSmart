@@ -1,4 +1,4 @@
-// insurance-dashboard.js - Logique pour le dashboard assurance
+﻿// insurance-dashboard.js - Logique pour le dashboard assurance
 
 class InsuranceDashboard {
     constructor() {
@@ -15,7 +15,7 @@ class InsuranceDashboard {
 
     async checkAuth() {
         try {
-            const response = await fetch('/api/me', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/me', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -97,7 +97,7 @@ class InsuranceDashboard {
 
     async viewKeyContracts() {
         try {
-            const response = await fetch('/api/insurance/policies/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/insurance/policies/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -128,7 +128,7 @@ class InsuranceDashboard {
 
     async loadDashboardData() {
         try {
-            const response = await fetch('/api/insurance/policies/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/insurance/policies/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -159,7 +159,7 @@ class InsuranceDashboard {
 
     async loadPendingInsurances() {
         try {
-            const response = await fetch('/api/insurance/policy-requests/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/insurance/policy-requests/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -176,7 +176,7 @@ class InsuranceDashboard {
 
     async loadApprovedInsurances() {
         try {
-            const response = await fetch('/api/insurance/policies/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/insurance/policies/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -230,7 +230,7 @@ class InsuranceDashboard {
         container.innerHTML = '<p class="no-data">Chargement des sinistres...</p>';
 
         try {
-            const response = await fetch('/api/insurance/claims/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/insurance/claims/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -265,7 +265,7 @@ class InsuranceDashboard {
 
     async viewInsuranceDetails(insuranceId) {
         try {
-            const response = await fetch('/api/insurance/policies/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/insurance/policies/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -304,7 +304,7 @@ class InsuranceDashboard {
         if (!confirm('Êtes-vous sûr de vouloir approuver cette assurance ?')) return;
 
         try {
-            const response = await fetch(`/api/insurance/${insuranceId}/approve/`, {
+            const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/insurance/${insuranceId}/approve/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -328,7 +328,7 @@ class InsuranceDashboard {
         if (!confirm('Êtes-vous sûr de vouloir rejeter cette assurance ?')) return;
 
         try {
-            const response = await fetch(`/api/insurance/${insuranceId}/reject/`, {
+            const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/insurance/${insuranceId}/reject/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -355,7 +355,7 @@ class InsuranceDashboard {
 
     async loadCharts() {
         try {
-            const response = await fetch('/api/insurance/policies/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/insurance/policies/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -452,7 +452,7 @@ class InsuranceDashboard {
 
 async function syncOfflineData() {
     try {
-        const response = await fetch('/api/offline/sync/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/offline/sync/me', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`

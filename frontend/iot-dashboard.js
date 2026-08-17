@@ -19,7 +19,7 @@ async function loadIoTDashboard() {
       console.error('fetch /me failed:', err);
       // Try to fetch raw text for better diagnostics (no auth header)
       try {
-        const raw = await fetch('/api/me');
+        const raw = await fetch('https://agrosmart-vi8d.onrender.com/api/me');
         const txt = await raw.text();
         throw new Error(txt || (err.message || 'Erreur lors de récupération de /me'));
       } catch (rawErr) {
@@ -161,7 +161,7 @@ function renderIoTChart(readings) {
 
 async function syncOfflineData() {
     try {
-        const response = await fetch('/api/offline/sync/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/offline/sync/me', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`

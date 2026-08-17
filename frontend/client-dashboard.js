@@ -1,4 +1,4 @@
-// client-dashboard.js - Logique pour le dashboard client
+﻿// client-dashboard.js - Logique pour le dashboard client
 
 // ===== UTILITY: Image Management =====
 class ImageManager {
@@ -72,7 +72,7 @@ class ClientDashboard {
 
     async checkAuth() {
         try {
-            const response = await fetch('/api/me', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/me', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -186,12 +186,12 @@ class ClientDashboard {
     async loadDashboardData() {
         try {
             const [ordersResponse, requestsResponse] = await Promise.all([
-                fetch('/api/client/orders/', {
+                fetch('https://agrosmart-vi8d.onrender.com/api/client/orders/', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }
                 }),
-                fetch('/api/client/requests/', {
+                fetch('https://agrosmart-vi8d.onrender.com/api/client/requests/', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }
@@ -234,7 +234,7 @@ class ClientDashboard {
 
     async loadGamificationStats() {
         try {
-            const response = await fetch('/api/gamification/stats', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/gamification/stats', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -354,7 +354,7 @@ class ClientDashboard {
     async loadMarketplace() {
         console.log('loadMarketplace appelé');
         try {
-            const response = await fetch('/api/marketplace/listings', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/marketplace/listings', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -379,7 +379,7 @@ class ClientDashboard {
 
     async loadRecommendations() {
         try {
-            const response = await fetch('/api/recommendations/hybrid?limit=10', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/recommendations/hybrid?limit=10', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -477,7 +477,7 @@ class ClientDashboard {
 
     async loadOrders() {
         try {
-            const response = await fetch('/api/client/orders/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/client/orders/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -535,7 +535,7 @@ class ClientDashboard {
 
     async viewOrderDetails(orderId) {
         try {
-            const response = await fetch(`/api/marketplace/orders/${orderId}`, {
+            const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/orders/${orderId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -624,7 +624,7 @@ class ClientDashboard {
 
     async loadRequests() {
         try {
-            const response = await fetch('/api/client/requests/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/client/requests/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -726,7 +726,7 @@ class ClientDashboard {
         container.innerHTML = '<p>Chargement des avis...</p>';
 
         try {
-            const response = await fetch('/api/marketplace/reviews/user', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/marketplace/reviews/user', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -843,7 +843,7 @@ class ClientDashboard {
 
     async loadListingReviews(listingId) {
         try {
-            const response = await fetch(`/api/marketplace/listings/${listingId}/reviews`);
+            const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/listings/${listingId}/reviews`);
             if (response.ok) {
                 const reviews = await response.json();
                 const reviewsContainer = document.getElementById(`listing-reviews-${listingId}`);
@@ -1138,7 +1138,7 @@ class ClientDashboard {
                 order_notes: order.orderNotes
             };
 
-            const createResponse = await fetch('/api/marketplace/orders/', {
+            const createResponse = await fetch('https://agrosmart-vi8d.onrender.com/api/marketplace/orders/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1166,7 +1166,7 @@ class ClientDashboard {
                 transactionId = `COD-${Date.now()}`;
             }
 
-            const paymentResponse = await fetch(`/api/marketplace/orders/${createdOrder.id}/pay`, {
+            const paymentResponse = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/orders/${createdOrder.id}/pay`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1258,7 +1258,7 @@ class ClientDashboard {
 
     async leaveReview(orderId) {
         try {
-            const response = await fetch(`/api/marketplace/orders/${orderId}`, {
+            const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/marketplace/orders/${orderId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -1407,7 +1407,7 @@ class ClientDashboard {
                 review_type: 'product'
             };
 
-            const response = await fetch('/api/marketplace/reviews', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/marketplace/reviews', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1465,7 +1465,7 @@ class ClientDashboard {
 
     async confirmDelivery(orderId) {
         try {
-            const response = await fetch('/api/payment-release/confirm-delivery', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/payment-release/confirm-delivery', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1501,7 +1501,7 @@ class ClientDashboard {
 
 async function syncOfflineData() {
     try {
-        const response = await fetch('/api/offline/sync/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/offline/sync/me', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`

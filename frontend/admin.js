@@ -1,4 +1,4 @@
-// Admin Dashboard JavaScript
+﻿// Admin Dashboard JavaScript
 
 let currentUser = null;
 
@@ -11,7 +11,7 @@ async function checkAuth() {
             return false;
         }
 
-        const response = await fetch('/api/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/me', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -85,7 +85,7 @@ async function loadDashboardStats() {
         const token = localStorage.getItem('accessToken');
         
         // Load users count
-        const usersResponse = await fetch('/api/admin/users', {
+        const usersResponse = await fetch('https://agrosmart-vi8d.onrender.com/api/admin/users', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (usersResponse.ok) {
@@ -97,7 +97,7 @@ async function loadDashboardStats() {
         }
 
         // Load farmers count
-        const farmersResponse = await fetch('/api/admin/users?role=farmer', {
+        const farmersResponse = await fetch('https://agrosmart-vi8d.onrender.com/api/admin/users?role=farmer', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (farmersResponse.ok) {

@@ -1,4 +1,4 @@
-// bank-dashboard.js - Logique pour le dashboard banque
+﻿// bank-dashboard.js - Logique pour le dashboard banque
 
 class BankDashboard {
     constructor() {
@@ -16,7 +16,7 @@ class BankDashboard {
 
     async checkAuth() {
         try {
-            const response = await fetch('/api/me', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/me', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -101,7 +101,7 @@ class BankDashboard {
 
     async loadDashboardData() {
         try {
-            const response = await fetch('/api/bank/loans/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/bank/loans/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -133,7 +133,7 @@ class BankDashboard {
 
     async loadPendingLoans() {
         try {
-            const response = await fetch('/api/bank/loan-requests/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/bank/loan-requests/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -150,7 +150,7 @@ class BankDashboard {
 
     async loadApprovedLoans() {
         try {
-            const response = await fetch('/api/bank/loans/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/bank/loans/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -205,7 +205,7 @@ class BankDashboard {
 
     async createLoansChart() {
         try {
-            const response = await fetch('/api/bank/loans/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/bank/loans/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -252,7 +252,7 @@ class BankDashboard {
 
     async createRegionsChart() {
         try {
-            const response = await fetch('/api/bank/loans/', {
+            const response = await fetch('https://agrosmart-vi8d.onrender.com/api/bank/loans/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -296,7 +296,7 @@ class BankDashboard {
 
     async viewLoanDetails(loanId) {
         try {
-            const response = await fetch(`/api/bank/loans/${loanId}/`, {
+            const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/bank/loans/${loanId}/`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -333,7 +333,7 @@ class BankDashboard {
         if (!confirm('Êtes-vous sûr de vouloir approuver ce prêt ?')) return;
 
         try {
-            const response = await fetch(`/api/bank/loans/${loanId}/approve/`, {
+            const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/bank/loans/${loanId}/approve/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -357,7 +357,7 @@ class BankDashboard {
         if (!confirm('Êtes-vous sûr de vouloir rejeter ce prêt ?')) return;
 
         try {
-            const response = await fetch(`/api/bank/loans/${loanId}/reject/`, {
+            const response = await fetch(`https://agrosmart-vi8d.onrender.com/api/bank/loans/${loanId}/reject/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -391,7 +391,7 @@ class BankDashboard {
 
 async function syncOfflineData() {
     try {
-        const response = await fetch('/api/offline/sync/me', {
+        const response = await fetch('https://agrosmart-vi8d.onrender.com/api/offline/sync/me', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
