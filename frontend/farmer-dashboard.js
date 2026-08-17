@@ -1996,7 +1996,7 @@ async function triggerAutoRetrain() {
         if (adminToken) localStorage.setItem('adminToken', adminToken);
     }
     try {
-        const resp = await fetch('/admin/auto-retrain', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Admin-Token': adminToken } });
+        const resp = await fetch('https://agrosmart-vi8d.onrender.com/admin/auto-retrain', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Admin-Token': adminToken } });
         if (!resp.ok) {
             const body = await resp.json().catch(()=>({}));
             alert('Erreur démarrage auto-retrain: ' + (body.detail || resp.status));
@@ -2011,7 +2011,7 @@ async function triggerAutoRetrain() {
         const start = Date.now();
         while (['queued','running'].includes(status) && (Date.now() - start) < 120000) {
             await new Promise(r => setTimeout(r, 2000));
-            const sresp = await fetch(`/admin/auto-retrain/${jobId}`, { headers: { 'Authorization': `Bearer ${token}`, 'X-Admin-Token': adminToken } });
+            const sresp = await fetch(`https://agrosmart-vi8d.onrender.com/admin/auto-retrain/${jobId}`, { headers: { 'Authorization': `Bearer ${token}`, 'X-Admin-Token': adminToken } });
             if (!sresp.ok) break;
             const sjson = await sresp.json();
             status = sjson.status;
@@ -2964,7 +2964,7 @@ async function editCrop(cropId) {
     if (!currentUser) return;
 
     try {
-        const response = await fetch(`/users/${currentUser.id}/crops/${cropId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/users/${currentUser.id}/crops/${cropId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             }
@@ -2991,7 +2991,7 @@ async function editCrop(cropId) {
             planting_date: plantingDate || null
         };
 
-        const patchResponse = await fetch(`/users/${currentUser.id}/crops/${cropId}`, {
+        const patchResponse = await fetch(`https://agrosmart-vi8d.onrender.com/users/${currentUser.id}/crops/${cropId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -3020,7 +3020,7 @@ async function deleteCrop(cropId) {
     if (!confirm('Voulez-vous vraiment supprimer cette culture ?')) return;
 
     try {
-        const response = await fetch(`/users/${currentUser.id}/crops/${cropId}`, {
+        const response = await fetch(`https://agrosmart-vi8d.onrender.com/users/${currentUser.id}/crops/${cropId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
