@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgroSmart - Dashboard IoT</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="/frontend/chart.min.js"></script>
+    <script src="/chart.min.js"></script>
     <link rel="stylesheet" href="styles.css">
-    <script src="/frontend/i18n.js"></script>
-    <script src="/frontend/language-selector.js"></script>
-    <script src="/frontend/push-notifications.js"></script>
+    <script src="/i18n.js"></script>
+    <script src="/language-selector.js"></script>
+    <script src="/push-notifications.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof languageSelector !== 'undefined') {
@@ -328,7 +328,7 @@
             </div>
             <div class="actions">
                 <button class="button-primary" id="refresh-dashboard"><i class="fas fa-sync-alt"></i> Rafraîchir</button>
-                <a class="button-primary button-secondary" href="/frontend/farmer-dashboard.html">Retour au dashboard</a>
+                <a class="button-primary button-secondary" href="/farmer-dashboard.html">Retour au dashboard</a>
             </div>
         </section>
 
@@ -392,7 +392,7 @@
 
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/frontend/sw.js')
+            navigator.serviceWorker.register('/sw.js')
                 .then(registration => console.log('Service Worker enregistré:', registration.scope))
                 .catch(error => console.error('Service Worker échec:', error));
         }

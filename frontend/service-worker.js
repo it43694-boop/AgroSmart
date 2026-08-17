@@ -1,18 +1,18 @@
-const CACHE_NAME = 'agrosmart-pwa-v2';
-const OFFLINE_URL = '/frontend/offline.html';
+﻿const CACHE_NAME = 'agrosmart-pwa-v2';
+const OFFLINE_URL = '/offline.html';
 const ASSETS_TO_CACHE = [
-  '/frontend/index.html',
-  '/frontend/login.html',
-  '/frontend/signup.html',
-  '/frontend/mfa-setup.html',
-  '/frontend/farmer-dashboard.html',
-  '/frontend/client-dashboard.html',
-  '/frontend/community-services.html',
-  '/frontend/marketplace.html',
-  '/frontend/styles.css',
-  '/frontend/app.js',
-  '/frontend/manifest.json',
-  '/frontend/offline.html'
+  '/index.html',
+  '/login.html',
+  '/signup.html',
+  '/mfa-setup.html',
+  '/farmer-dashboard.html',
+  '/client-dashboard.html',
+  '/community-services.html',
+  '/marketplace.html',
+  '/styles.css',
+  '/app.js',
+  '/manifest.json',
+  '/offline.html'
 ];
 
 self.addEventListener('install', (event) => {
@@ -45,7 +45,7 @@ self.addEventListener('fetch', (event) => {
 
   const requestUrl = new URL(event.request.url);
 
-  if (requestUrl.origin === self.location.origin && requestUrl.pathname.startsWith('/frontend/')) {
+  if (requestUrl.origin === self.location.origin && requestUrl.pathname.startsWith('/')) {
     event.respondWith(
       fetch(event.request).then((response) => {
         if (response && response.ok && !response.bodyUsed) {

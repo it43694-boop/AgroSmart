@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -239,12 +239,12 @@ Admin: ${data.is_admin}`;
             try {
                 const token = localStorage.getItem('accessToken');
                 if (!token) {
-                    addResult('4. GET /frontend/farmer-dashboard.html', 'fail',
+                    addResult('4. GET /farmer-dashboard.html', 'fail',
                         'Pas de token');
                     return false;
                 }
 
-                const response = await fetch(`${apiBase}/frontend/farmer-dashboard.html`, {
+                const response = await fetch(`${apiBase}/farmer-dashboard.html`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -253,16 +253,16 @@ Admin: ${data.is_admin}`;
                 if (response.status === 200) {
                     const html = await response.text();
                     const hasJs = html.includes('farmer-dashboard.js');
-                    addResult('4. GET /frontend/farmer-dashboard.html', 'pass',
+                    addResult('4. GET /farmer-dashboard.html', 'pass',
                         `Fichier charge (${html.length} bytes)${hasJs ? ', farmer-dashboard.js inclus' : ''}`);
                     return true;
                 } else {
-                    addResult('4. GET /frontend/farmer-dashboard.html', 'fail',
+                    addResult('4. GET /farmer-dashboard.html', 'fail',
                         `Status ${response.status}`);
                     return false;
                 }
             } catch (e) {
-                addResult('4. GET /frontend/farmer-dashboard.html', 'fail',
+                addResult('4. GET /farmer-dashboard.html', 'fail',
                     'Erreur: ' + e.message);
                 return false;
             }

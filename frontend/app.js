@@ -1,4 +1,4 @@
-const apiBase = (window.location.origin || '') + '/api';
+﻿const apiBase = (window.location.origin || '') + '/api';
 let accessToken = localStorage.getItem('accessToken') || null;
 const OFFLINE_QUEUE_KEY = 'agrosmartOfflineQueue';
 const TOKEN_KEY = 'accessToken';
@@ -21,7 +21,7 @@ async function registerServiceWorker() {
   }
 
   try {
-    const registration = await navigator.serviceWorker.register('/frontend/service-worker.js');
+    const registration = await navigator.serviceWorker.register('/service-worker.js');
     console.log('Service worker AgroSmart enregistré à', registration.scope);
   } catch (error) {
     console.warn('Enregistrement du service worker échoué:', error);

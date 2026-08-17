@@ -1,4 +1,4 @@
-class PushNotificationManager {
+﻿class PushNotificationManager {
     constructor() {
         this.registration = null;
         this.subscription = null;
@@ -12,7 +12,7 @@ class PushNotificationManager {
         }
 
         try {
-            this.registration = await navigator.serviceWorker.register('/frontend/sw.js');
+            this.registration = await navigator.serviceWorker.register('/sw.js');
             console.log('Service Worker enregistré pour push:', this.registration);
             
             const existingSubscription = await this.registration.pushManager.getSubscription();
@@ -142,8 +142,8 @@ class PushNotificationManager {
         if (Notification.permission === 'granted') {
             new Notification(title, {
                 body: body,
-                icon: '/frontend/icons/icon-192x192.png',
-                badge: '/frontend/icons/badge-72x72.png',
+                icon: '/icons/icon-192x192.png',
+                badge: '/icons/badge-72x72.png',
                 data: data
             });
         }

@@ -1,4 +1,4 @@
-const iotUserIdKey = 'iotDashboardUserId';
+﻿const iotUserIdKey = 'iotDashboardUserId';
 
 async function loadIoTDashboard() {
   const errorBox = document.getElementById('iot-error');
@@ -7,7 +7,7 @@ async function loadIoTDashboard() {
 
   const token = localStorage.getItem('accessToken');
   if (!token) {
-    window.location.href = '/frontend/login.html';
+    window.location.href = '/login.html';
     return;
   }
 

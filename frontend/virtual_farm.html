@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -297,7 +297,7 @@
                     • Initialisation du rendu 3D...
                 </div>
                 <button class="btn btn-secondary" onclick="loadFarmData()" style="margin-top: 12px;">Recharger les données</button>
-                <button class="btn btn-primary" onclick="window.location.href='/frontend/login.html'" style="margin-top: 12px; margin-left: 8px;">Se connecter</button>
+                <button class="btn btn-primary" onclick="window.location.href='/login.html'" style="margin-top: 12px; margin-left: 8px;">Se connecter</button>
             </div>
         </section>
 
@@ -784,7 +784,7 @@ const satelliteImageEl = document.getElementById('satellite-image');
             if (!token) {
                 overlayMeshStatus.textContent = 'Veuillez vous connecter pour charger les données.';
                 logStatus('Aucun token d\'authentification trouvé. Redirection vers la page de connexion...');
-                setTimeout(() => window.location.href = '/frontend/login.html', 2000);
+                setTimeout(() => window.location.href = '/login.html', 2000);
                 return;
             }
 

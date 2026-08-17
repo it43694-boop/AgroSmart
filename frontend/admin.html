@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +8,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" rel="stylesheet">
-    <script src="/frontend/i18n.js"></script>
-    <script src="/frontend/language-selector.js"></script>
-    <script src="/frontend/push-notifications.js"></script>
+    <script src="/i18n.js"></script>
+    <script src="/language-selector.js"></script>
+    <script src="/push-notifications.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof languageSelector !== 'undefined') {
@@ -2728,7 +2728,7 @@
         </script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/frontend/sw.js')
+            navigator.serviceWorker.register('/sw.js')
                 .then(registration => console.log('Service Worker enregistré:', registration.scope))
                 .catch(error => console.error('Service Worker échec:', error));
         }

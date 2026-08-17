@@ -1,19 +1,19 @@
-const CACHE_NAME = 'agrosmart-v1';
+﻿const CACHE_NAME = 'agrosmart-v1';
 const STATIC_CACHE = 'agrosmart-static-v1';
 const DYNAMIC_CACHE = 'agrosmart-dynamic-v1';
 
 const STATIC_ASSETS = [
-    '/frontend/',
-    '/frontend/index.html',
-    '/frontend/farmer-dashboard.html',
-    '/frontend/admin.html',
-    '/frontend/bank-dashboard.html',
-    '/frontend/client-dashboard.html',
-    '/frontend/iot-dashboard.html',
-    '/frontend/insurance-dashboard.html',
-    '/frontend/styles.css',
-    '/frontend/i18n.js',
-    '/frontend/manifest.json'
+    '/',
+    '/index.html',
+    '/farmer-dashboard.html',
+    '/admin.html',
+    '/bank-dashboard.html',
+    '/client-dashboard.html',
+    '/iot-dashboard.html',
+    '/insurance-dashboard.html',
+    '/styles.css',
+    '/i18n.js',
+    '/manifest.json'
 ];
 
 const API_CACHE_DURATION = 5 * 60 * 1000;
@@ -50,7 +50,7 @@ self.addEventListener('fetch', (event) => {
 
     if (url.pathname.startsWith('/api/')) {
         event.respondWith(handleApiRequest(event.request));
-    } else if (url.pathname.startsWith('/frontend/')) {
+    } else if (url.pathname.startsWith('/')) {
         event.respondWith(handleStaticRequest(event.request));
     } else {
         event.respondWith(fetch(event.request));
@@ -168,8 +168,8 @@ async function removeOfflineItem(id) {
 self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : 'Nouvelle notification AgroSmart',
-        icon: '/frontend/icons/icon-192x192.png',
-        badge: '/frontend/icons/badge-72x72.png',
+        icon: '/icons/icon-192x192.png',
+        badge: '/icons/badge-72x72.png',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
@@ -179,12 +179,12 @@ self.addEventListener('push', (event) => {
             {
                 action: 'explore',
                 title: 'Explorer',
-                icon: '/frontend/icons/explore.png'
+                icon: '/icons/explore.png'
             },
             {
                 action: 'close',
                 title: 'Fermer',
-                icon: '/frontend/icons/close.png'
+                icon: '/icons/close.png'
             }
         ]
     };
@@ -199,7 +199,7 @@ self.addEventListener('notificationclick', (event) => {
 
     if (event.action === 'explore') {
         event.waitUntil(
-            clients.openWindow('/frontend/index.html')
+            clients.openWindow('/index.html')
         );
     }
 });
